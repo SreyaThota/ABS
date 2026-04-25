@@ -2,11 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ABS — ABS AI design system. Google Material You inspired. HSL only. */
+/* ABS — design system tuned to Google's 4 brand colors. HSL only.
+   Google Blue   #4285F4 → 217 89% 61%
+   Google Red    #EA4335 → 4 90% 58%
+   Google Yellow #FBBC05 → 45 98% 51%
+   Google Green  #34A853 → 137 53% 43%
+*/
 
 @layer base {
   :root {
-    --background: 220 20% 98%;
+    --background: 0 0% 100%;
     --foreground: 222 25% 12%;
 
     --card: 0 0% 100%;
@@ -15,25 +20,25 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 25% 12%;
 
-    /* Google blue */
-    --primary: 217 89% 56%;
+    /* Google Blue */
+    --primary: 217 89% 61%;
     --primary-foreground: 0 0% 100%;
     --primary-soft: 217 95% 96%;
 
-    /* Google green */
-    --success: 142 64% 42%;
+    /* Google Green */
+    --success: 137 53% 43%;
     --success-foreground: 0 0% 100%;
-    --success-soft: 142 60% 95%;
+    --success-soft: 137 60% 95%;
 
-    /* Google yellow */
-    --warning: 41 96% 52%;
-    --warning-foreground: 30 50% 15%;
+    /* Google Yellow */
+    --warning: 45 98% 51%;
+    --warning-foreground: 30 60% 14%;
     --warning-soft: 45 100% 95%;
 
-    /* Google red */
-    --danger: 4 81% 58%;
+    /* Google Red */
+    --danger: 4 90% 58%;
     --danger-foreground: 0 0% 100%;
-    --danger-soft: 4 90% 96%;
+    --danger-soft: 4 95% 96%;
 
     --secondary: 220 16% 96%;
     --secondary-foreground: 222 25% 18%;
@@ -44,12 +49,12 @@
     --accent: 217 95% 96%;
     --accent-foreground: 217 89% 36%;
 
-    --destructive: 4 81% 58%;
+    --destructive: 4 90% 58%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 14% 91%;
     --input: 220 14% 91%;
-    --ring: 217 89% 56%;
+    --ring: 217 89% 61%;
 
     --radius: 1.25rem;
 
@@ -58,9 +63,22 @@
     --shadow-card: 0 1px 3px hsl(220 20% 20% / 0.04), 0 8px 24px hsl(220 25% 30% / 0.06);
     --shadow-float: 0 2px 4px hsl(220 20% 20% / 0.06), 0 16px 40px hsl(217 60% 40% / 0.12);
 
-    /* Subtle gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(217 95% 96%), hsl(220 20% 98%));
-    --gradient-progress: linear-gradient(90deg, hsl(217 89% 56%), hsl(142 64% 52%));
+    /* 4-color Google gradients */
+    --gradient-hero: linear-gradient(135deg,
+      hsl(217 95% 97%) 0%,
+      hsl(45 100% 96%) 35%,
+      hsl(137 60% 96%) 70%,
+      hsl(4 95% 97%) 100%);
+    --gradient-progress: linear-gradient(90deg,
+      hsl(217 89% 61%) 0%,
+      hsl(4 90% 58%) 33%,
+      hsl(45 98% 51%) 66%,
+      hsl(137 53% 43%) 100%);
+    --gradient-google: linear-gradient(135deg,
+      hsl(217 89% 61%) 0%,
+      hsl(4 90% 58%) 33%,
+      hsl(45 98% 51%) 66%,
+      hsl(137 53% 43%) 100%);
 
     --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
