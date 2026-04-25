@@ -2,133 +2,131 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ABS — premium design system. Google 4-color palette used with restraint:
-   Blue (primary brand), Green (success), Yellow (highlight), Red (error).
-   Surface ramp: surface-1 → surface-3. Single CTA gradient. HSL only. */
+/* ABS — premium design system.
+   Palette (no Google brand colors):
+   • Brand   Indigo-violet  239 84% 62%
+   • Success Sage           160 84% 36%
+   • Highlight Warm amber   38  92% 48%
+   • Danger  Coral          350 89% 58%
+   • Neutrals: warm-cool slate ramp (hue 240).
+   60 / 30 / 10 rule. HSL only. */
 
 @layer base {
   :root {
-    /* Neutral surface ramp — warm-cool near-white */
-    --background: 220 18% 99%;
-    --surface-1: 220 18% 99%;
-    --surface-2: 220 16% 97%;
+    /* Surfaces — warm slate near-white */
+    --background: 240 20% 99%;
+    --surface-1: 240 20% 99%;
+    --surface-2: 240 16% 97%;
     --surface-3: 0 0% 100%;
-    --foreground: 222 28% 11%;
+    --foreground: 240 24% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 28% 11%;
+    --card-foreground: 240 24% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 28% 11%;
+    --popover-foreground: 240 24% 10%;
 
-    /* Google Blue — primary brand */
-    --primary: 217 89% 56%;
+    /* Brand — indigo-violet */
+    --primary: 239 84% 62%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 217 100% 96%;
-    --primary-strong: 217 89% 48%;
+    --primary-soft: 239 100% 97%;
+    --primary-strong: 239 84% 54%;
 
-    /* Google Green — success */
-    --success: 137 53% 39%;
+    /* Success — sage */
+    --success: 160 84% 36%;
     --success-foreground: 0 0% 100%;
-    --success-soft: 137 50% 95%;
+    --success-soft: 160 70% 95%;
 
-    /* Google Yellow — highlight */
-    --warning: 45 96% 48%;
+    /* Highlight — warm amber */
+    --warning: 38 92% 48%;
     --warning-foreground: 30 60% 12%;
-    --warning-soft: 45 100% 95%;
+    --warning-soft: 38 100% 95%;
 
-    /* Google Red — error / important */
-    --danger: 4 84% 56%;
+    /* Danger — coral */
+    --danger: 350 89% 58%;
     --danger-foreground: 0 0% 100%;
-    --danger-soft: 4 90% 96%;
+    --danger-soft: 350 100% 96%;
 
-    --secondary: 220 16% 96%;
-    --secondary-foreground: 222 25% 18%;
+    --secondary: 240 16% 96%;
+    --secondary-foreground: 240 22% 18%;
 
-    --muted: 220 14% 95%;
-    --muted-foreground: 220 8% 44%;
+    --muted: 240 14% 95%;
+    --muted-foreground: 240 8% 44%;
 
-    --accent: 217 100% 96%;
-    --accent-foreground: 217 89% 36%;
+    --accent: 239 100% 97%;
+    --accent-foreground: 239 84% 40%;
 
-    --destructive: 4 84% 56%;
+    --destructive: 350 89% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 91%;
-    --input: 220 14% 91%;
-    --ring: 217 89% 56%;
+    --border: 240 14% 91%;
+    --input: 240 14% 91%;
+    --ring: 239 84% 62%;
 
     --radius: 16px;
     --radius-sm: 10px;
     --radius-lg: 22px;
 
-    /* Refined shadows: hairline + soft ambient */
     --shadow-card:
-      0 0 0 1px hsl(220 25% 14% / 0.04),
-      0 1px 2px hsl(220 25% 14% / 0.04),
-      0 8px 24px -8px hsl(220 25% 14% / 0.08);
+      0 0 0 1px hsl(240 25% 14% / 0.04),
+      0 1px 2px hsl(240 25% 14% / 0.04),
+      0 8px 24px -8px hsl(240 25% 14% / 0.08);
     --shadow-pop:
-      0 0 0 1px hsl(220 25% 14% / 0.05),
-      0 4px 12px hsl(220 25% 14% / 0.08),
-      0 24px 48px -16px hsl(220 25% 14% / 0.16);
-    --shadow-ring: 0 0 0 3px hsl(217 89% 56% / 0.18);
+      0 0 0 1px hsl(240 25% 14% / 0.05),
+      0 4px 12px hsl(240 25% 14% / 0.08),
+      0 24px 48px -16px hsl(240 25% 14% / 0.16);
+    --shadow-ring: 0 0 0 3px hsl(239 84% 62% / 0.18);
 
-    /* Calm primary wash for hero areas */
     --gradient-hero: linear-gradient(135deg,
-      hsl(217 100% 97%) 0%,
-      hsl(220 25% 99%) 100%);
-    /* Single confident CTA gradient (blue depth) */
+      hsl(239 100% 97%) 0%,
+      hsl(240 25% 99%) 100%);
     --gradient-cta: linear-gradient(135deg,
-      hsl(217 89% 58%) 0%,
-      hsl(217 89% 48%) 100%);
-    /* Progress through readiness — blue → green only */
+      hsl(239 84% 64%) 0%,
+      hsl(252 78% 56%) 100%);
     --gradient-progress: linear-gradient(90deg,
-      hsl(217 89% 56%) 0%,
-      hsl(137 53% 45%) 100%);
-    /* Reserved 4-color band — used ONLY on the brand mark */
-    --gradient-google: linear-gradient(135deg,
-      hsl(217 89% 56%) 0%,
-      hsl(4 84% 56%) 33%,
-      hsl(45 96% 50%) 66%,
-      hsl(137 53% 42%) 100%);
+      hsl(239 84% 62%) 0%,
+      hsl(160 84% 42%) 100%);
+    --gradient-brand: linear-gradient(135deg,
+      hsl(239 84% 62%) 0%,
+      hsl(268 78% 58%) 100%);
 
     --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .dark {
-    --background: 222 28% 7%;
-    --surface-1: 222 28% 7%;
-    --surface-2: 222 24% 10%;
-    --surface-3: 222 22% 13%;
-    --foreground: 220 16% 96%;
-    --card: 222 22% 12%;
-    --card-foreground: 220 16% 96%;
-    --popover: 222 22% 12%;
-    --popover-foreground: 220 16% 96%;
-    --primary: 217 89% 64%;
-    --primary-foreground: 222 28% 7%;
-    --primary-soft: 217 60% 16%;
-    --primary-strong: 217 89% 56%;
-    --success: 137 53% 50%;
-    --success-foreground: 222 28% 7%;
-    --success-soft: 137 40% 14%;
-    --warning: 45 96% 56%;
-    --warning-foreground: 222 28% 7%;
-    --warning-soft: 45 60% 14%;
-    --danger: 4 84% 64%;
-    --danger-foreground: 222 28% 7%;
-    --danger-soft: 4 50% 16%;
-    --secondary: 222 18% 16%;
-    --secondary-foreground: 220 16% 96%;
-    --muted: 222 18% 16%;
-    --muted-foreground: 220 10% 62%;
-    --accent: 217 60% 18%;
-    --accent-foreground: 217 89% 80%;
-    --destructive: 4 84% 56%;
+    --background: 240 24% 7%;
+    --surface-1: 240 24% 7%;
+    --surface-2: 240 22% 10%;
+    --surface-3: 240 20% 13%;
+    --foreground: 240 16% 96%;
+    --card: 240 22% 12%;
+    --card-foreground: 240 16% 96%;
+    --popover: 240 22% 12%;
+    --popover-foreground: 240 16% 96%;
+    --primary: 239 84% 70%;
+    --primary-foreground: 240 24% 7%;
+    --primary-soft: 239 50% 18%;
+    --primary-strong: 239 84% 62%;
+    --success: 160 84% 46%;
+    --success-foreground: 240 24% 7%;
+    --success-soft: 160 50% 14%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 240 24% 7%;
+    --warning-soft: 38 60% 14%;
+    --danger: 350 89% 66%;
+    --danger-foreground: 240 24% 7%;
+    --danger-soft: 350 50% 18%;
+    --secondary: 240 18% 16%;
+    --secondary-foreground: 240 16% 96%;
+    --muted: 240 18% 16%;
+    --muted-foreground: 240 10% 62%;
+    --accent: 239 60% 20%;
+    --accent-foreground: 239 84% 82%;
+    --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 222 18% 18%;
-    --input: 222 18% 18%;
-    --ring: 217 89% 64%;
+    --border: 240 18% 18%;
+    --input: 240 18% 18%;
+    --ring: 239 84% 70%;
     --shadow-card:
       0 0 0 1px hsl(0 0% 100% / 0.04),
       0 1px 2px hsl(0 0% 0% / 0.4),
