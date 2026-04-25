@@ -46,12 +46,12 @@ export default {
           foreground: "hsl(var(--danger-foreground))",
           soft: "hsl(var(--danger-soft))",
         },
-        energy: {
-          DEFAULT: "hsl(var(--energy))",
-          foreground: "hsl(var(--energy-foreground))",
-          soft: "hsl(var(--energy-soft))",
-        },
         "primary-soft": "hsl(var(--primary-soft))",
+        "primary-glow": "hsl(var(--primary-glow))",
+        "border-glow": "hsl(var(--border-glow))",
+        "surface-1": "hsl(var(--surface-1))",
+        "surface-2": "hsl(var(--surface-2))",
+        "surface-3": "hsl(var(--surface-3))",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
