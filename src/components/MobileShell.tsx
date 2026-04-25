@@ -12,18 +12,17 @@ const tabs = [
 ];
 
 const BrandMark = () => (
-  // Editorial brand mark: italic serif glyph + lime "live" dot
-  <div className="abs-brand-mark relative" style={{ background: "var(--gradient-brand)" }}>
+  // Obsidian tile, italic serif "a" in mustard, soft halo
+  <div
+    className="relative w-8 h-8 rounded-[10px] flex items-center justify-center abs-microglow"
+    style={{ background: "hsl(var(--surface-3))", border: "1px solid hsl(var(--border-glow))" }}
+  >
     <span
-      className="text-primary-foreground italic font-bold leading-none"
+      className="text-primary italic font-bold leading-none"
       style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: "18px" }}
     >
       a
     </span>
-    <span
-      className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-energy"
-      style={{ boxShadow: "0 0 6px hsl(var(--energy) / 0.7)" }}
-    />
   </div>
 );
 
