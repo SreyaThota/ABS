@@ -12,14 +12,18 @@ const tabs = [
 ];
 
 const BrandMark = () => (
-  // Single solid indigo tile with 4 dots — the only place the 4 palette colors meet.
-  <div className="abs-brand-mark">
-    <div className="grid grid-cols-2 gap-[3px]">
-      <span className="w-1.5 h-1.5 rounded-full bg-white/95" />
-      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(350_89%_72%)]" />
-      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(38_92%_68%)]" />
-      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(160_84%_60%)]" />
-    </div>
+  // Editorial brand mark: italic serif glyph + lime "live" dot
+  <div className="abs-brand-mark relative" style={{ background: "var(--gradient-brand)" }}>
+    <span
+      className="text-primary-foreground italic font-bold leading-none"
+      style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: "18px" }}
+    >
+      a
+    </span>
+    <span
+      className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-energy"
+      style={{ boxShadow: "0 0 6px hsl(var(--energy) / 0.7)" }}
+    />
   </div>
 );
 
