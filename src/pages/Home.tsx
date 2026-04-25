@@ -1,12 +1,22 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useLearningStore } from "@/store/learning";
 import { ReadinessRing } from "@/components/ReadinessRing";
 import { Sparkles, Upload, ArrowRight, CheckCircle2, Flame, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProfileSheet } from "@/components/ProfileSheet";
+
+const greet = () => {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
+};
 
 const Home = () => {
   const navigate = useNavigate();
-  const { entries, readiness } = useLearningStore();
+  const { entries, readiness, profile } = useLearningStore();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const todayTasks = entries
     .flatMap((e) => e.actionTasks.map((t, i) => ({ ...t, entryId: e.id, idx: i, source: e.title })))
@@ -19,22 +29,36 @@ const Home = () => {
       .flatMap((e) => e.skills)
   ).size;
 
+  const targetMatches = entries.filter((e) =>
+    e.careerRoles.some((r) => r.toLowerCase() === (profile?.targetCareer || "").toLowerCase())
+  ).length;
+
   const insight =
     entries.length === 0
-      ? "Upload your first lecture — your career starts compounding today."
-      : `You're building momentum. ${entries.length} learning${entries.length > 1 ? "s" : ""} processed, ${todaySkills || "+"} fresh skill${todaySkills === 1 ? "" : "s"} today.`;
+      ? `Upload your first lecture — your path to ${profile?.targetCareer || "your goal"} starts now.`
+      : profile
+      ? `${targetMatches} of your learnings map to ${profile.targetCareer}. Keep stacking — readiness compounds fast.`
+      : `You're building momentum. ${entries.length} learnings processed.`;
+
+  const initial = (profile?.name || "A").charAt(0).toUpperCase();
+  const firstName = profile?.name?.split(" ")[0] || "there";
 
   return (
     <div className="px-5 pt-12 pb-6 animate-fade-in">
       <header className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-xs text-muted-foreground tracking-wide uppercase">ABS · CareerOS AI</p>
+          <p className="text-xs text-muted-foreground tracking-wide uppercase">{greet()}, {firstName}</p>
           <h1 className="text-2xl font-semibold tracking-tight mt-1">Today's impact</h1>
         </div>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-success flex items-center justify-center text-primary-foreground font-semibold shadow-md">
-          A
-        </div>
+        <button
+          onClick={() => setProfileOpen(true)}
+          className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-success flex items-center justify-center text-primary-foreground font-semibold shadow-md abs-tap"
+          aria-label="Edit profile"
+        >
+          {initial}
+        </button>
       </header>
+      <ProfileSheet open={profileOpen} onOpenChange={setProfileOpen} />
 
       {/* Career ring hero */}
       <section className="abs-card-elevated p-6 mb-4 flex items-center gap-5"
