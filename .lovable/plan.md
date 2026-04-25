@@ -1,72 +1,34 @@
-# Personalized AI Structuring
+# Fix PDF / DOCX uploads
 
-Right now the LLM produces the same breakdown for everyone. We'll add a **learner profile** so the same lecture produces different career mappings for an "AI/ML aspirant, 2nd-year, beginner" vs a "Data Analyst, working pro, intermediate".
+**Problem:** Upload reads PDFs as raw text, which gives binary gibberish. The AI then "summarizes" the gibberish — describing PDF file structure instead of your actual content (e.g. asymmetric encryption).
 
-## What you'll get
+**Fix:** Extract real text from the document on the client *before* sending to the AI.
 
-A first-launch onboarding that captures who the learner is, then every AI output (summary, tasks, skills, resume bullet, next step) is tailored to that profile — without changing the clean UI you already have.
+## Changes
 
-## 1. Onboarding screen (new)
+1. **Add libraries**
+   - `pdfjs-dist` — extracts text from text-based PDFs (client-side, fast, no server cost)
+   - `mammoth` — extracts text from `.docx`
 
-Shown once on first open. Soft, minimal, 3 quick steps with progress dots.
+2. **New helper** `src/lib/extractText.ts` — picks the right extractor by file type:
+   - `.pdf` → pdf.js, walks up to 50 pages, joins text
+   - `.docx` → mammoth raw text
+   - everything else (`.txt`, `.md`, `.csv`, code) → plain `file.text()`
 
-- **Step 1 — Who you are**: name + education stage (High school / Undergrad / Postgrad / Working pro)
-- **Step 2 — Target career**: chip selection (AI/ML Engineer, Software Engineer, Data Analyst, Product Manager, Designer, Other → free text)
-- **Step 3 — Your level + interests**: skill level (Beginner / Intermediate / Advanced) + 2-3 interest chips (Web, ML, Data, Mobile, Systems, Design…)
+3. **Update `src/pages/Upload.tsx`**
+   - Show a small "Extracting…" state on the upload card with a spinner
+   - On success: toast with character count, fill the textarea with extracted text (so you can preview/edit before processing)
+   - On failure (e.g. scanned/image-only PDF): clear toast asking to paste manually
+   - Block "Process with AI" until extraction finishes
 
-Saved locally in the same Zustand store. Editable later from a small "Profile" sheet on Home (avatar tap).
+## Behavior after the fix
 
-## 2. Personalized AI behavior
+- Upload `Asymmetric_Encryption.pdf` → extraction runs (~1s) → textarea fills with the actual lecture content → "Process with AI" sends real text → AI returns proper summary, key concepts, career mapping for cryptography/security.
 
-The edge function (`process-learning`) will accept a `profile` object alongside `content` and inject it into the system prompt so the LLM:
+## Note on scanned PDFs
 
-- **Summary** — written at the user's level (simpler for beginners, denser for advanced)
-- **Action tasks** — recommend resources/exercises matching their stage
-- **Career mapping** — prioritize roles aligned with their target career first
-- **Resume bullet** — phrased for the role they're targeting
-- **Next step** — points toward the next gap in *their* path, not a generic one
-- **Readiness delta** — weighted higher when the learning maps to their target role
+If a PDF is just scanned images (no text layer), extraction will return empty. Those need OCR which is heavier — out of scope for this fix. The error toast will tell you to paste manually. We can add OCR later if you need it.
 
-## 3. Home dashboard tweaks
+## No backend changes
 
-- Greeting uses their name ("Good evening, Anya")
-- AI insight card mentions their target career ("3 more skills until you're match-ready for AI/ML Engineer")
-- Career Tracker highlights their chosen target role first with a "Your path" badge
-
-## 4. Profile editor
-
-Tap the avatar on Home → bottom sheet to update target career, level, interests. Re-personalizes future AI outputs immediately.
-
----
-
-## Technical details
-
-**Store** (`src/store/learning.ts`)
-- Add `profile: { name, stage, targetCareer, level, interests[] } | null` and `setProfile()`
-- Add `hasOnboarded` flag
-
-**New files**
-- `src/pages/Onboarding.tsx` — 3-step flow, redirects to `/` when done
-- `src/components/ProfileSheet.tsx` — bottom sheet editor (uses existing shadcn `Sheet`)
-
-**Routing** — `App.tsx` wraps routes with a check: if `!hasOnboarded`, redirect to `/onboarding`.
-
-**Edge function** (`supabase/functions/process-learning/index.ts`)
-- Accept `{ content, profile }` in body
-- Inject profile into system prompt:
-  ```
-  Learner profile:
-  - Name: {name}
-  - Stage: {stage}
-  - Target career: {targetCareer}
-  - Skill level: {level}
-  - Interests: {interests}
-  Tailor every section to this learner. Prioritize {targetCareer} mapping. Match vocabulary to {level}.
-  ```
-- Tool schema unchanged (output stays clean and structured)
-
-**Upload page** — pulls `profile` from store and passes it in the `invoke` body.
-
-**Home + Career pages** — read profile, show name/target-career-aware copy and reorder suggested roles to put the user's target first.
-
-No DB changes. No new dependencies. Minimal, focused diff.
+Edge function and prompt stay the same. This is purely a client-side input fix.
