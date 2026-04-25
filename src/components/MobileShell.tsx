@@ -84,7 +84,7 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
           </nav>
 
           <div className="hidden lg:flex items-center gap-2 px-5 py-4 border-t border-border/70">
-            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+            <span className="w-1.5 h-1.5 rounded-full bg-energy" style={{ boxShadow: "0 0 6px hsl(var(--energy) / 0.7)" }} />
             <span className="text-[11px] text-muted-foreground">v1.0 · all systems go</span>
           </div>
         </aside>
