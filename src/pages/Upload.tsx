@@ -113,15 +113,24 @@ const Upload = () => {
 
       <button
         onClick={() => fileRef.current?.click()}
-        className="w-full abs-card p-5 flex items-center gap-4 mb-4 abs-tap border-dashed"
+        disabled={extracting}
+        className="w-full abs-card p-5 flex items-center gap-4 mb-4 abs-tap border-dashed disabled:opacity-70"
       >
         <div className="w-12 h-12 rounded-2xl bg-primary-soft flex items-center justify-center">
-          <FileUp className="w-5 h-5 text-primary" />
+          {extracting ? (
+            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          ) : (
+            <FileUp className="w-5 h-5 text-primary" />
+          )}
         </div>
         <div className="text-left flex-1 min-w-0">
-          <p className="text-sm font-medium">{filename || "Upload file"}</p>
+          <p className="text-sm font-medium truncate">{filename || "Upload file"}</p>
           <p className="text-xs text-muted-foreground truncate">
-            {filename ? "Tap to change" : "PDF, txt, md, docx — any format"}
+            {extracting
+              ? "Extracting text…"
+              : filename
+              ? "Tap to change"
+              : "PDF, DOCX, TXT, MD — any format"}
           </p>
         </div>
       </button>
@@ -144,7 +153,8 @@ const Upload = () => {
 
       <Button
         onClick={process}
-        className="w-full h-14 rounded-2xl text-base font-medium shadow-lg shadow-primary/25 abs-tap"
+        disabled={extracting}
+        className="w-full h-14 rounded-2xl text-base font-medium shadow-lg shadow-primary/25 abs-tap disabled:opacity-50"
       >
         <Sparkles className="w-5 h-5 mr-2" /> Process with AI
       </Button>
