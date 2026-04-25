@@ -1,17 +1,18 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Upload, Target, FileText } from "lucide-react";
+import { Home, Upload, MessageCircle, Target, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
   { to: "/", label: "Home", icon: Home },
   { to: "/upload", label: "Upload", icon: Upload },
+  { to: "/chat", label: "Coach", icon: MessageCircle },
   { to: "/career", label: "Career", icon: Target },
   { to: "/resume", label: "Resume", icon: FileText },
 ];
 
 export const MobileShell = ({ children }: { children: React.ReactNode }) => {
   const loc = useLocation();
-  const hideNav = loc.pathname.startsWith("/result");
+  const hideNav = loc.pathname.startsWith("/result") || loc.pathname.startsWith("/chat") || loc.pathname.startsWith("/quiz");
   return (
     <div className="min-h-screen w-full bg-background flex justify-center">
       <div className="w-full max-w-[440px] min-h-screen flex flex-col relative">
@@ -26,7 +27,7 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
                   end={t.to === "/"}
                   className={({ isActive }) =>
                     cn(
-                      "flex flex-col items-center justify-center gap-0.5 px-4 py-2 rounded-full transition-all duration-300 abs-tap min-w-[64px]",
+                      "flex flex-col items-center justify-center gap-0.5 px-3 py-2 rounded-full transition-all duration-300 abs-tap min-w-[52px]",
                       isActive
                         ? "bg-primary-soft text-primary"
                         : "text-muted-foreground hover:text-foreground"

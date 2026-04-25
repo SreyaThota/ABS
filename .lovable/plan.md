@@ -1,58 +1,65 @@
-# Add Concept ID + Auto-Generated Quiz
+# Auto-Quiz + Personalized Career Chat Coach
 
-## What you'll get
+Two additions to make the app feel like a true career mentor:
 
-After processing any learning material, each entry becomes a named **Concept** with a short readable ID (e.g. `ASYM-CRYPTO-7K2`). A **5-min quiz** is auto-generated for it — a mix of fill-in-the-blanks and MCQs — playable right from the Result page, with score tracking.
+## 1. Auto-generate the quiz right after the summary
 
-## User flow
+Right now, after upload → summary, the user has to tap "Take 5-min quiz" and wait for it to generate. We'll generate the quiz **automatically in the background** as soon as the summary is created, so when the user lands on the Result page the quiz is already ready (or finishing up).
 
-1. Upload notes → AI processes (as today).
-2. Result page now shows:
-   - **Concept name** (clean title) + **Concept ID** badge (copyable, like `ASYM-CRYPTO-7K2`).
-   - New **"Take 5-min Quiz"** card with question count + estimated time.
-3. Tap quiz → full-screen quiz player:
-   - Mix of ~6–8 questions: fill-in-the-blanks + MCQs.
-   - One question per screen, progress bar, instant feedback.
-   - Final score screen → "+X readiness pts", retry, back to concept.
-4. Home + Career pages show "Quizzes passed" stat; readiness score increases more when you pass quizzes.
+**Changes:**
+- `src/pages/Upload.tsx` — after `addEntry(...)` succeeds and we have an `entry.id`, fire a non-blocking call to `generate-quiz` and `attachQuiz(entry.id, ...)` when it returns. We still navigate to Result immediately so the user isn't blocked.
+- `src/pages/Result.tsx` — quiz CTA card shows three states:
+  - **Generating…** (spinner + "Building your quiz…") — disabled, tap is a no-op
+  - **Ready** (Brain icon + "Take 5-min quiz · N questions")
+  - **Retake** (with best score)
+- If the background generation fails silently, the existing on-demand `startQuiz()` still works as a fallback.
 
-## How it works
+## 2. Personalized Career Chat Coach
 
-### 1. Concept ID generation (client)
-- Slug from title (first 2 meaningful words, uppercased, max 10 chars) + 3-char base36 hash → e.g. `ASYM-CRYPT-7K2`.
-- Stored on `LearningEntry` as `conceptId`.
+A new chat screen where the user can ask things like:
+- *"Am I a good fit for a Data Scientist role?"*
+- *"What should I learn next to become a Security Analyst?"*
+- *"Which of my concepts apply to my target career?"*
+- *"What's missing from my resume for this role?"*
 
-### 2. Quiz generation (new edge function `generate-quiz`)
-- Input: `{ entryId, content, title, keyConcepts, profile }`.
-- Calls Lovable AI (`google/gemini-2.5-flash`) with a tool-call schema:
+The coach answers using **(a) the learner's profile** (target career, level, stage, interests) and **(b) every concept they've uploaded** (titles, summaries, skills, careerRoles, quiz pass status). So replies are grounded in *their* actual learning — not generic advice.
+
+### User flow
+- New "Coach" tab in the bottom nav (replacing/joining nav as a 5th icon).
+- Tap → `/chat` screen: clean message thread (user bubbles right, coach bubbles left), input at bottom, streaming responses with markdown rendering.
+- Welcome message suggests 3 starter questions tailored to their profile (e.g. *"Am I ready for {targetCareer}?"*, *"What skills am I missing?"*, *"Pick my next concept"*).
+- Conversation persists in memory for the session (not stored in DB — keeps it private + simple).
+
+### Backend (new edge function `career-chat`)
+- Streams responses (SSE) from Lovable AI (`google/gemini-2.5-flash`).
+- System prompt = **"You are CareerOS Coach"** + injected context block:
   ```
-  {
-    questions: [
-      { type: "fill_blank", prompt: "RSA uses ___ keys.", answer: "two", hint?: "" },
-      { type: "mcq", prompt: "...", options: [4 strings], correctIndex: 0, explanation: "..." }
-    ]
-  }
+  LEARNER PROFILE: name, stage, target career, level, interests
+  LEARNING HISTORY (N concepts):
+    1. {title} [{conceptId}] — skills: ..., maps to: ..., quiz: passed/not taken
+       summary: ...
+    2. ...
   ```
-- Generates 6–8 questions, ~50/50 mix, calibrated to learner `level`.
-- Returns within ~3–5s.
+- Coach behavior rules baked in: be honest about gaps, cite specific concept IDs when relevant, give concrete next steps, never make up skills the user doesn't have, calibrate tone to their level.
+- Handles 429 / 402 with friendly toast messages on the client.
 
-### 3. State (`src/store/learning.ts`)
-- Extend `LearningEntry` with: `conceptId: string`, `quiz?: Quiz`, `quizBestScore?: number`, `quizAttempts?: number`.
-- New `Quiz` type with questions array.
-- Actions: `attachQuiz(entryId, quiz)`, `recordQuizScore(entryId, score)` (bumps readiness +5 on first pass ≥70%).
+### Frontend
+- New `src/pages/Chat.tsx` — message list + composer, streaming SSE parser (token-by-token rendering), markdown via `react-markdown`.
+- New `src/components/ChatMessage.tsx` — bubble styling consistent with the app's card design.
+- Add `react-markdown` dependency.
+- New route `/chat` in `src/App.tsx`.
+- `src/components/MobileShell.tsx` — add "Coach" tab (MessageCircle icon).
 
-### 4. UI changes
-- **`src/pages/Result.tsx`**: Add Concept ID pill next to title (tap = copy). Add "Quiz" section card with CTA. Lazy-generate quiz on first open (loading state, then route to player).
-- **New `src/pages/Quiz.tsx`**: Full-screen player. Progress bar, one Q per screen, fill-blank uses `<Input>` (case-insensitive trim match, fuzzy for typos), MCQ uses tappable cards. Final score screen.
-- **New route** `/quiz/:id` in `src/App.tsx`.
-- **`src/pages/Home.tsx`**: Small "Quizzes passed: N" chip.
+## Technical notes
 
-### 5. Backend file
-- New `supabase/functions/generate-quiz/index.ts` (mirrors `process-learning` structure: CORS, tool-calling, 429/402 handling). Auto-deployed.
+- **Streaming**: client uses `fetch` against `${VITE_SUPABASE_URL}/functions/v1/career-chat` with the publishable key, parses SSE line-by-line, updates the last assistant message progressively.
+- **Context size**: cap at last 30 concepts to stay well under model context. For each concept include only title, conceptId, summary, skills, careerRoles, quizPassed — not the full source text.
+- **Privacy**: chat history lives in component state only; no DB tables added. Resets on page reload.
+- **Background quiz generation**: `Upload.tsx` does `void supabase.functions.invoke("generate-quiz", ...).then(...)` *before* navigating; the `attachQuiz` call hits the persisted store so Result picks it up reactively.
 
-## Out of scope (for now)
-- Spaced repetition scheduling.
-- Sharing concept IDs across users / public quiz library.
-- Timer countdown (we show estimated time, not a hard timer — keeps it low-pressure).
+## Out of scope
+- Persisting chat across sessions (can add later with a `chat_messages` table if requested).
+- Voice input.
+- Coach being able to *create* new learning entries from chat.
 
 Approve to build.

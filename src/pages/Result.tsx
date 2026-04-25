@@ -28,12 +28,17 @@ const Result = () => {
   const profile = useLearningStore((s) => s.profile);
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
 
+  // Background quiz from Upload may still be in flight — show "preparing" state until it lands.
+  const justCreated = entry ? Date.now() - entry.createdAt < 60_000 : false;
+  const quizPreparing = !!entry && !entry.quiz && justCreated && !generatingQuiz;
+
   const startQuiz = async () => {
     if (!entry) return;
     if (entry.quiz?.questions?.length) {
       navigate(`/quiz/${entry.id}`);
       return;
     }
+    if (quizPreparing) return; // wait for background gen
     setGeneratingQuiz(true);
     try {
       const { data, error } = await supabase.functions.invoke("generate-quiz", {
@@ -94,12 +99,12 @@ const Result = () => {
       {/* Quiz CTA */}
       <button
         onClick={startQuiz}
-        disabled={generatingQuiz}
-        className="w-full abs-card-elevated p-4 flex items-center gap-3 abs-tap text-left disabled:opacity-70"
+        disabled={generatingQuiz || quizPreparing}
+        className="w-full abs-card-elevated p-4 flex items-center gap-3 abs-tap text-left disabled:opacity-80"
         style={{ background: "var(--gradient-hero)" }}
       >
         <div className="w-11 h-11 rounded-2xl bg-card flex items-center justify-center shadow-sm shrink-0">
-          {generatingQuiz ? (
+          {generatingQuiz || quizPreparing ? (
             <Loader2 className="w-5 h-5 text-primary animate-spin" />
           ) : (
             <Brain className="w-5 h-5 text-primary" />
@@ -107,11 +112,19 @@ const Result = () => {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold leading-snug">
-            {entry.quiz ? "Retake quiz" : "Take 5-min quiz"}
+            {quizPreparing
+              ? "Preparing your quiz…"
+              : generatingQuiz
+              ? "Building your quiz…"
+              : entry.quiz
+              ? "Take 5-min quiz"
+              : "Take 5-min quiz"}
           </p>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            {generatingQuiz
-              ? "Building personalized questions…"
+            {quizPreparing
+              ? "Personalized questions, ~10s"
+              : generatingQuiz
+              ? "Personalized questions, ~10s"
               : entry.quiz
               ? `${entry.quiz.questions.length} questions${entry.quizBestScore != null ? ` · best ${entry.quizBestScore}%` : ""}`
               : "Mixed fill-blanks + MCQs · earn +5 readiness"}
