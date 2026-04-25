@@ -98,7 +98,7 @@ Personalization rules:
           {
             role: "system",
             content:
-              "You are CareerOS AI — a career GPS for students. Convert any learning material into a structured, action-oriented breakdown that connects study to real careers. Use simple language. Be concise, direct, and student-friendly. Always prioritize 'what to do next' and real-world career relevance." +
+              "You are ABS AI — a career GPS for students. Convert any learning material into a structured, action-oriented breakdown that connects study to real careers. Use simple language. Be concise, direct, and student-friendly. Always prioritize 'what to do next' and real-world career relevance." +
               profileBlock,
           },
           { role: "user", content: content.slice(0, 12000) },
