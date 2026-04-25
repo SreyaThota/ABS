@@ -73,7 +73,7 @@ const Result = () => {
   }
 
   return (
-    <div className="px-5 pt-12 pb-12 animate-fade-in space-y-3">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-12 animate-fade-in space-y-3">
       <header className="flex items-center justify-between mb-2">
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground abs-tap">
           <ArrowLeft className="w-4 h-4" /> Back
