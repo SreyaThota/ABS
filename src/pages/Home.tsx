@@ -46,7 +46,7 @@ const Home = () => {
   const firstName = profile?.name?.split(" ")[0] || "there";
 
   return (
-    <div className="px-5 pt-12 pb-6 animate-fade-in">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-6 animate-fade-in">
       <header className="flex items-center justify-between mb-6">
         <div>
           <p className="text-xs text-muted-foreground tracking-wide uppercase">{greet()}, {firstName}</p>
