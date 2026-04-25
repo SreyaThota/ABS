@@ -12,13 +12,13 @@ const tabs = [
 ];
 
 const BrandMark = () => (
-  // 4-dot Google nod inside a single solid blue tile
+  // Single solid indigo tile with 4 dots — the only place the 4 palette colors meet.
   <div className="abs-brand-mark">
     <div className="grid grid-cols-2 gap-[3px]">
       <span className="w-1.5 h-1.5 rounded-full bg-white/95" />
-      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(4_84%_70%)]" />
-      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(45_96%_70%)]" />
-      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(137_53%_70%)]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(350_89%_72%)]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(38_92%_68%)]" />
+      <span className="w-1.5 h-1.5 rounded-full bg-[hsl(160_84%_60%)]" />
     </div>
   </div>
 );
