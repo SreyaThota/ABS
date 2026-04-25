@@ -46,6 +46,11 @@ export default {
           foreground: "hsl(var(--danger-foreground))",
           soft: "hsl(var(--danger-soft))",
         },
+        energy: {
+          DEFAULT: "hsl(var(--energy))",
+          foreground: "hsl(var(--energy-foreground))",
+          soft: "hsl(var(--energy-soft))",
+        },
         "primary-soft": "hsl(var(--primary-soft))",
         muted: {
           DEFAULT: "hsl(var(--muted))",
