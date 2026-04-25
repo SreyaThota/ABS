@@ -19,6 +19,7 @@ const loadingPhases = [
 const Upload = () => {
   const navigate = useNavigate();
   const addEntry = useLearningStore((s) => s.addEntry);
+  const attachQuiz = useLearningStore((s) => s.attachQuiz);
   const profile = useLearningStore((s) => s.profile);
   const [text, setText] = useState("");
   const [filename, setFilename] = useState<string>("");
@@ -72,6 +73,25 @@ const Upload = () => {
         readinessDelta: data.readinessDelta || 3,
         sourcePreview: text.slice(0, 200),
       });
+
+      // Fire-and-forget: build the quiz in the background
+      void supabase.functions
+        .invoke("generate-quiz", {
+          body: {
+            content:
+              entry.summary + "\n\n" + entry.keyConcepts.join("\n") + "\n\n" + entry.sourcePreview,
+            title: entry.title,
+            keyConcepts: entry.keyConcepts,
+            profile,
+          },
+        })
+        .then(({ data: qd, error: qe }) => {
+          if (qe || qd?.error) return;
+          const questions = qd?.questions || [];
+          if (questions.length) attachQuiz(entry.id, { questions, createdAt: Date.now() });
+        })
+        .catch(() => {});
+
       navigate(`/result/${entry.id}`);
     } catch (e: any) {
       toast.error(e.message || "Processing failed");
