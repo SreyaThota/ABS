@@ -29,7 +29,7 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
         {/* Side rail (md+) */}
         <aside className="hidden md:flex md:flex-col md:sticky md:top-0 md:h-screen md:w-[76px] lg:w-[220px] border-r border-border bg-card/60 backdrop-blur-sm shrink-0">
           <div className="flex items-center gap-2 px-4 lg:px-5 h-16 border-b border-border">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-success flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary via-danger to-warning flex items-center justify-center shadow-sm">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
             <span className="hidden lg:block text-sm font-semibold tracking-tight">ABS</span>

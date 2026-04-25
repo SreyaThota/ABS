@@ -60,7 +60,7 @@ const Resume = () => {
             <ul className="space-y-3">
               {entries.map((e) => (
                 <li key={e.id} className="flex gap-2.5">
-                  <span className="w-1 rounded-full bg-gradient-to-b from-primary to-success shrink-0" />
+                  <span className="w-1 rounded-full bg-gradient-to-b from-primary via-warning to-success shrink-0" />
                   <div>
                     <p className="text-sm leading-relaxed text-foreground/90">{e.resumeBullet}</p>
                     <p className="text-[11px] text-muted-foreground mt-0.5">{e.title}</p>
