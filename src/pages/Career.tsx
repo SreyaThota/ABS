@@ -1,15 +1,33 @@
 import { useLearningStore, allSkills, allRoles } from "@/store/learning";
 import { ReadinessRing } from "@/components/ReadinessRing";
-import { TrendingUp, Target, AlertCircle } from "lucide-react";
+import { TrendingUp, Target, AlertCircle, Star } from "lucide-react";
 
-const suggestedRoles = [
+const baseRoles = [
   { name: "AI/ML Engineer", required: ["Python", "Machine Learning", "Linear Algebra", "Neural Networks"] },
   { name: "Software Engineer", required: ["Data Structures", "Algorithms", "System Design", "Git"] },
   { name: "Data Analyst", required: ["SQL", "Statistics", "Visualization", "Excel"] },
+  { name: "Product Manager", required: ["User Research", "Roadmapping", "Analytics", "Communication"] },
+  { name: "Designer", required: ["UI Design", "UX Research", "Figma", "Prototyping"] },
 ];
 
 const Career = () => {
-  const { entries, readiness } = useLearningStore();
+  const { entries, readiness, profile } = useLearningStore();
+  const skills = allSkills(entries);
+  const roles = allRoles(entries);
+  const haveSkills = new Set(skills.map((s) => s.name.toLowerCase()));
+
+  // Ensure target career is in list & first
+  const target = profile?.targetCareer;
+  let suggestedRoles = baseRoles.slice();
+  if (target && !suggestedRoles.find((r) => r.name.toLowerCase() === target.toLowerCase())) {
+    suggestedRoles.unshift({ name: target, required: ["Foundations", "Practice projects", "Portfolio", "Networking"] });
+  }
+  if (target) {
+    suggestedRoles = [
+      ...suggestedRoles.filter((r) => r.name.toLowerCase() === target.toLowerCase()),
+      ...suggestedRoles.filter((r) => r.name.toLowerCase() !== target.toLowerCase()),
+    ];
+  }
   const skills = allSkills(entries);
   const roles = allRoles(entries);
   const haveSkills = new Set(skills.map((s) => s.name.toLowerCase()));
