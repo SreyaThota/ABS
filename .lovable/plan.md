@@ -1,74 +1,76 @@
 ## Goal
 
-Make the Result page feel like a "visual study deck" — turn the summary into bite-sized animated slides/bullets, ensure it covers all key points, and move the Quiz CTA to the very bottom of the page.
+Make the app look great on **both mobile and desktop** without rewriting every page. Today everything is hard-locked to a 440px column (`MobileShell`), so on a laptop the app shows as a thin phone-sized strip in the middle of a white screen.
+
+## Approach
+
+Keep the mobile UX exactly as it is. On `md+` screens (≥768px) switch to a desktop layout:
+- A left **side rail** with the same nav items (replaces the floating bottom pill).
+- A wider **content column** (max ~720px) so cards aren't cramped.
+- A right **context panel** (only on `lg+`, ≥1024px) that shows a quick "Your stats" card (readiness ring, streak, quizzes passed) so the desktop view feels intentional, not just stretched.
+
+No page logic changes — only layout/CSS shell + a couple of grid tweaks on the busiest pages.
 
 ## Changes
 
-### 1. Reorder Result page (`src/pages/Result.tsx`)
+### 1. `src/components/MobileShell.tsx` — responsive shell
 
-New section order, top → bottom:
-1. Header (back + readiness pill)
-2. Concept ID + Title
-3. **Summary Deck** (new visual component — replaces the plain summary card)
-4. Key concepts
-5. Action tasks
-6. Career mapping + Skills
-7. Resume bullet
-8. Next learning step
-9. **Quiz CTA** (moved here — last card on the page)
-10. "See career impact" button
-
-Remove the Quiz CTA from its current position right under the title.
-
-### 2. New Summary Deck component (`src/components/SummaryDeck.tsx`)
-
-A swipeable mini-slide deck that turns the summary into a visual, presentation-style breakdown covering all points — not a wall of text.
-
-Structure: 4 auto-built slides from existing entry data, no new AI call needed.
+Rewrite to render two layouts driven by Tailwind breakpoints, no JS device detection:
 
 ```text
-┌─────────────────────────┐
-│  ●○○○         Slide 1/4 │
-│                         │
-│   [icon]                │
-│   The Big Idea          │
-│   {summary sentence 1}  │
-│                         │
-│   ◀  swipe / tap  ▶     │
-└─────────────────────────┘
+< md (mobile)               md+ (tablet/desktop)
+┌──────────────┐            ┌────┬───────────────┬─────────┐
+│              │            │side│   content     │ context │
+│   content    │            │rail│   (max-720)   │ (lg+)   │
+│              │            │    │               │         │
+│ [bottom nav] │            │    │               │         │
+└──────────────┘            └────┴───────────────┴─────────┘
 ```
 
-Slides generated client-side from `entry`:
-- **Slide 1 — The Big Idea**: first sentence of `summary` + Sparkles icon, gradient bg
-- **Slide 2 — How it works**: remaining summary sentences as 2–3 short bullets (split on `. `), Lightbulb icon
-- **Slide 3 — Must-know**: all `keyConcepts` as animated bullet list (staggered fade-in), Brain icon
-- **Slide 4 — Why it matters**: top `careerRoles` + first `skills` as chips, plus `nextStep` as a one-liner, Rocket icon
+- Keep current floating bottom nav, but hide it `md:hidden`.
+- Add a new `<aside>` side rail (`hidden md:flex`) with the same 5 tab items: vertical icon buttons + labels, sticky, ~76px wide on `md`, ~220px wide with full labels on `lg`.
+- Logo/wordmark "CareerOS" at top of the rail.
+- Content column: `mx-auto w-full max-w-[440px] md:max-w-[680px] lg:max-w-[720px]`.
+- Right context panel: `hidden lg:block w-[300px]` — renders a small `<DesktopContextPanel />` (new tiny component) showing `readiness`, `entries.length`, `quizzesPassed`. Hidden on `/result/*`, `/quiz/*`, `/chat`, `/onboarding`.
+- The existing `hideNav` logic for `/result`, `/quiz`, `/chat` keeps working — on desktop the side rail still shows (so users can navigate away), only the bottom mobile nav is hidden.
 
-Interactions:
-- Swipe left/right (touch) + left/right arrow buttons + dot indicators (tap to jump)
-- Each slide animates in with `animate-fade-in` + `animate-scale-in`
-- Bullets inside Slide 3 stagger using `style={{ animationDelay: ... }}`
-- Auto-height card; fixed min-height ~280px so transitions feel stable
-- "View as text" toggle at the bottom expands a plain `<p>` of the full summary for accessibility / users who prefer text
+### 2. New `src/components/DesktopContextPanel.tsx`
 
-This gives the "PPT slide / animation" feel the user asked for, while guaranteeing all points are covered (summary + key concepts + career + next step are all surfaced across the 4 slides).
+Small read-only sidebar widget pulling from `useLearningStore`:
+- Mini readiness ring + percentage
+- "Concepts learned: N"
+- "Quizzes passed: N"
+- "Day streak" (if available, otherwise omit)
+- A subtle "Tip" card with a rotating hint (e.g. "Upload a PDF to earn +5 readiness")
 
-### 3. Quiz CTA — relocate, keep behavior
+Pure presentation, no new data.
 
-Move the existing Quiz button JSX block to just above the "See career impact" button. No logic changes — `startQuiz`, `quizPreparing`, `generatingQuiz`, and the three states (Generating / Ready / Retake) all stay identical. Just a new position + a small section label above it: "Test yourself".
+### 3. Page-level responsive polish (small, surgical)
+
+Most pages already work at 680px because they're vertical card stacks. Two pages benefit from a 2-column grid on `md+`:
+
+- **`src/pages/Home.tsx`**: wrap the "Today's tasks" card and the "Insight + Recent learnings" stack in a `grid md:grid-cols-2 gap-4` so the dashboard feels like a dashboard on desktop. Header stays full-width above the grid.
+- **`src/pages/Result.tsx`**: wrap the lower sections (Career mapping, Resume bullet, Next learning step) in `grid md:grid-cols-2 gap-3`. Summary deck, key concepts, action tasks, and the final Quiz CTA stay full-width for emphasis.
+
+That's it — no other page rewrites. `Career`, `Resume`, `Quiz`, `Chat`, `Upload`, `Onboarding` already read fine in a 720px column.
+
+### 4. Page top padding
+
+Pages currently use `pt-12` (designed for mobile status-bar spacing). On desktop the side rail handles spacing, so add `md:pt-8` where it matters: Home, Result, Career, Resume, Upload, Chat. One-line tweaks each.
 
 ## Technical notes
 
-- Pure client-side; no edge function or DB changes.
-- Sentence splitting uses a simple regex `/(?<=[.!?])\s+/` with a fallback if summary has only one sentence (then Slide 2 becomes a "Quick recap" of `keyConcepts.slice(0,2)`).
-- Swipe handled via `onTouchStart` / `onTouchEnd` deltas; no extra dependency.
-- All animation classes (`animate-fade-in`, `animate-scale-in`, `animate-slide-up`) already exist in the Tailwind config.
-- No changes to store, routes, edge functions, or other pages.
+- Pure Tailwind responsive classes — no new dependencies, no `useMediaQuery`, no JS branching for layout.
+- Breakpoints: `md` = 768px (tablet+), `lg` = 1024px (desktop with context panel).
+- Background stays `bg-background`; the desktop layout uses the same tokens so light/dark mode keep working.
+- Bottom nav stays untouched on mobile — same component, just gated behind `md:hidden`.
+- All existing `abs-card`, `animate-*`, and gradient styles work unchanged.
+- No store, route, or edge function changes.
 
 ## Out of scope
 
-- Generating a separate AI "slide script" (current entry data already covers all points).
-- Persisting deck state.
-- Auto-advancing slides.
+- Different page layouts per device beyond the two grid tweaks above.
+- Resizing/repositioning the streaming chat composer (already works fine wider).
+- A separate "desktop-only" landing page.
 
 Approve to build.
