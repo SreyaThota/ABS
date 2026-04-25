@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLearningStore } from "@/store/learning";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Briefcase, CheckCircle2, Lightbulb, Rocket, Target, FileText, Sparkles, Brain, Loader2, Copy } from "lucide-react";
+import { ArrowLeft, Briefcase, CheckCircle2, Lightbulb, Rocket, Target, FileText, Brain, Loader2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { SummaryDeck } from "@/components/SummaryDeck";
 
 const Section = ({ icon: Icon, label, color, children }: any) => (
   <section className="abs-card p-5 animate-slide-up">
