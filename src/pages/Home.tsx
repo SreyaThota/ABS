@@ -29,6 +29,8 @@ const Home = () => {
       .flatMap((e) => e.skills)
   ).size;
 
+  const quizzesPassed = entries.filter((e) => e.quizPassed).length;
+
   const targetMatches = entries.filter((e) =>
     e.careerRoles.some((r) => r.toLowerCase() === (profile?.targetCareer || "").toLowerCase())
   ).length;
@@ -69,9 +71,14 @@ const Home = () => {
           <p className="text-base font-medium leading-snug mt-1">
             Every lecture moves your career forward.
           </p>
-          <div className="flex items-center gap-1.5 mt-3 text-xs text-success">
-            <Flame className="w-3.5 h-3.5" />
-            <span className="font-medium">+{entries.reduce((s, e) => s + (e.readinessDelta || 0), 0)} pts earned</span>
+          <div className="flex items-center gap-3 mt-3 text-xs">
+            <span className="flex items-center gap-1.5 text-success font-medium">
+              <Flame className="w-3.5 h-3.5" />
+              +{entries.reduce((s, e) => s + (e.readinessDelta || 0), 0)} pts
+            </span>
+            {quizzesPassed > 0 && (
+              <span className="text-muted-foreground">· {quizzesPassed} quiz{quizzesPassed === 1 ? "" : "es"} passed</span>
+            )}
           </div>
         </div>
       </section>
