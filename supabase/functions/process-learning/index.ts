@@ -59,7 +59,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { content } = await req.json();
+    const { content, profile } = await req.json();
     if (!content || typeof content !== "string") {
       return new Response(JSON.stringify({ error: "content required" }), {
         status: 400,
@@ -69,6 +69,22 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+
+    const profileBlock = profile
+      ? `\n\nLEARNER PROFILE (personalize every section to this learner):
+- Name: ${profile.name || "Learner"}
+- Education stage: ${profile.stage || "Undergrad"}
+- Target career: ${profile.targetCareer || "Not set"}
+- Current skill level: ${profile.level || "Beginner"}
+- Interests: ${(profile.interests || []).join(", ") || "general"}
+
+Personalization rules:
+- Match vocabulary and depth to a ${profile.level || "Beginner"} learner.
+- In careerRoles, ALWAYS list "${profile.targetCareer}" first when it's relevant; then add 1-3 adjacent roles.
+- Frame the resumeBullet as if for someone targeting "${profile.targetCareer}".
+- The nextStep must point toward the next gap on the path to "${profile.targetCareer}".
+- If learning strongly maps to "${profile.targetCareer}", set readinessDelta toward 6-8; if loosely related, 2-4.`
+      : "";
 
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -82,7 +98,8 @@ serve(async (req) => {
           {
             role: "system",
             content:
-              "You are CareerOS AI — a career GPS for students. Convert any learning material into a structured, action-oriented breakdown that connects study to real careers. Use simple language. Be concise, direct, and student-friendly. Always prioritize 'what to do next' and real-world career relevance.",
+              "You are CareerOS AI — a career GPS for students. Convert any learning material into a structured, action-oriented breakdown that connects study to real careers. Use simple language. Be concise, direct, and student-friendly. Always prioritize 'what to do next' and real-world career relevance." +
+              profileBlock,
           },
           { role: "user", content: content.slice(0, 12000) },
         ],
