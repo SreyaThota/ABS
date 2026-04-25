@@ -54,7 +54,7 @@ const Home = () => {
         </div>
         <button
           onClick={() => setProfileOpen(true)}
-          className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-success flex items-center justify-center text-primary-foreground font-semibold shadow-md abs-tap"
+          className="w-11 h-11 rounded-full bg-gradient-to-br from-primary via-danger to-warning flex items-center justify-center text-primary-foreground font-semibold shadow-md abs-tap"
           aria-label="Edit profile"
         >
           {initial}
