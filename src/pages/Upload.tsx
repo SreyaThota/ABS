@@ -5,7 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { LoadingDots } from "@/components/LoadingDots";
 import { useLearningStore } from "@/store/learning";
 import { supabase } from "@/integrations/supabase/client";
-import { FileUp, Sparkles, ArrowLeft, FileText } from "lucide-react";
+import { extractFileText } from "@/lib/extractText";
+import { FileUp, Sparkles, ArrowLeft, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const loadingPhases = [
@@ -21,17 +22,28 @@ const Upload = () => {
   const profile = useLearningStore((s) => s.profile);
   const [text, setText] = useState("");
   const [filename, setFilename] = useState<string>("");
+  const [extracting, setExtracting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [phase, setPhase] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const onFile = async (f: File) => {
     setFilename(f.name);
+    setExtracting(true);
+    setText("");
     try {
-      const t = await f.text();
-      setText(t.slice(0, 20000));
-    } catch {
-      toast.error("Could not read this file as text");
+      const extracted = (await extractFileText(f)).trim();
+      if (extracted.length < 30) {
+        toast.error("Couldn't pull readable text. Scanned PDF? Paste manually below.");
+      } else {
+        setText(extracted.slice(0, 20000));
+        toast.success(`Extracted ${extracted.length.toLocaleString()} characters`);
+      }
+    } catch (e: any) {
+      console.error("extract error:", e);
+      toast.error("Couldn't read this file. Try pasting the text manually.");
+    } finally {
+      setExtracting(false);
     }
   };
 
