@@ -108,7 +108,10 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
 
       {/* Mobile flush bottom bar */}
       {!hideMobileNav && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-card/95 backdrop-blur-xl border-t border-border">
+        <nav
+          className="md:hidden fixed bottom-0 left-0 right-0 z-30 backdrop-blur-xl"
+          style={{ background: "hsl(var(--glass))", borderTop: "1px solid hsl(var(--border-glow))" }}
+        >
           <div
             className="flex items-stretch justify-around px-1 pt-1.5"
             style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6px)" }}
