@@ -1,90 +1,76 @@
 import { useLearningStore } from "@/store/learning";
-import { ReadinessRing } from "@/components/ReadinessRing";
-import { BookOpen, CheckCircle2, Lightbulb, Target } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 const tips = [
-  "Upload a PDF to earn +5 readiness.",
+  "Upload a PDF — earn +5 readiness.",
   "Pass a quiz to lock in a concept.",
   "Ask the Coach: 'Am I a fit for my target role?'",
-  "Stack 3 concepts in a week to compound momentum.",
+  "Three concepts a week compounds fast.",
 ];
+
+const Stat = ({ label, value, hint }: { label: string; value: string | number; hint?: string }) => (
+  <div className="py-3">
+    <p className="t-micro">{label}</p>
+    <div className="flex items-baseline gap-2 mt-1">
+      <span className="abs-stat-num">{value}</span>
+      {hint && <span className="text-[11px] text-muted-foreground">{hint}</span>}
+    </div>
+  </div>
+);
 
 export const DesktopContextPanel = () => {
   const { entries, readiness, profile } = useLearningStore();
   const quizzesPassed = entries.filter((e) => e.quizPassed).length;
   const tip = tips[entries.length % tips.length];
+  const totalPts = entries.reduce((s, e) => s + (e.readinessDelta || 0), 0);
 
   return (
-    <div className="p-6 space-y-5 animate-fade-in">
-      <div>
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-          Your snapshot
-        </p>
-        <h3 className="text-base font-semibold tracking-tight mt-1">
-          {profile?.name?.split(" ")[0] || "Learner"}'s progress
+    <div className="p-7 animate-fade-in">
+      <div className="mb-5">
+        <p className="t-micro">Snapshot</p>
+        <h3 className="t-h1 mt-1">
+          {profile?.name?.split(" ")[0] || "Learner"}
         </h3>
-      </div>
-
-      <div
-        className="abs-card-elevated p-5 flex flex-col items-center text-center gap-3"
-        style={{ background: "var(--gradient-hero)" }}
-      >
-        <ReadinessRing value={readiness} />
-        <div>
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-            Career readiness
+        {profile?.targetCareer && (
+          <p className="text-[12px] text-muted-foreground mt-1">
+            On the path to <span className="text-foreground/80 font-medium">{profile.targetCareer}</span>
           </p>
-          {profile?.targetCareer && (
-            <p className="text-xs text-foreground/75 mt-1">
-              Target: <span className="font-medium">{profile.targetCareer}</span>
-            </p>
-          )}
+        )}
+      </div>
+
+      {/* Readiness with thin progress */}
+      <div className="mb-5">
+        <div className="flex items-baseline justify-between mb-2">
+          <span className="t-micro">Readiness</span>
+          <span className="text-[13px] font-semibold tabular-nums">{readiness}%</span>
+        </div>
+        <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${Math.max(2, readiness)}%`,
+              backgroundImage: "var(--gradient-progress)",
+            }}
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div className="abs-card p-3">
-          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span className="text-[10px] uppercase tracking-wider font-semibold">Concepts</span>
-          </div>
-          <p className="text-xl font-semibold">{entries.length}</p>
-        </div>
-        <div className="abs-card p-3">
-          <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span className="text-[10px] uppercase tracking-wider font-semibold">Quizzes</span>
-          </div>
-          <p className="text-xl font-semibold">{quizzesPassed}</p>
-        </div>
-      </div>
+      <div className="abs-divider" />
 
-      {profile?.targetCareer && (
-        <div className="abs-card p-4 flex items-start gap-3">
-          <div className="w-8 h-8 rounded-xl bg-primary-soft flex items-center justify-center shrink-0">
-            <Target className="w-4 h-4 text-primary" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-              On the path to
-            </p>
-            <p className="text-sm font-medium leading-snug mt-0.5 truncate">
-              {profile.targetCareer}
-            </p>
-          </div>
-        </div>
-      )}
+      <Stat label="Concepts" value={entries.length} hint={entries.length === 1 ? "learned" : "learned"} />
+      <div className="abs-divider" />
+      <Stat label="Quizzes passed" value={quizzesPassed} />
+      <div className="abs-divider" />
+      <Stat label="Career points" value={`+${totalPts}`} />
 
-      <div className="abs-card p-4 flex items-start gap-3">
-        <div className="w-8 h-8 rounded-xl bg-warning-soft flex items-center justify-center shrink-0">
-          <Lightbulb className="w-4 h-4 text-warning" />
+      <div className="mt-6 rounded-xl border border-border/60 bg-card p-4">
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <Sparkles className="w-3 h-3 text-primary" />
+          <span className="t-micro">Tip</span>
         </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-            Tip
-          </p>
-          <p className="text-sm text-foreground/80 leading-snug mt-0.5">{tip}</p>
-        </div>
+        <p className="text-[13px] leading-relaxed text-foreground/80 italic">
+          {tip}
+        </p>
       </div>
     </div>
   );
