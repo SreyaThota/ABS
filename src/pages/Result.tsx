@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLearningStore } from "@/store/learning";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Briefcase, CheckCircle2, Lightbulb, Rocket, Target, FileText, Sparkles, Brain, Loader2, Copy } from "lucide-react";
+import { ArrowLeft, Briefcase, CheckCircle2, Lightbulb, Rocket, Target, FileText, Brain, Loader2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { SummaryDeck } from "@/components/SummaryDeck";
 
 const Section = ({ icon: Icon, label, color, children }: any) => (
   <section className="abs-card p-5 animate-slide-up">
@@ -96,48 +97,7 @@ const Result = () => {
         <h1 className="text-2xl font-semibold tracking-tight mt-1 leading-tight">{entry.title}</h1>
       </div>
 
-      {/* Quiz CTA */}
-      <button
-        onClick={startQuiz}
-        disabled={generatingQuiz || quizPreparing}
-        className="w-full abs-card-elevated p-4 flex items-center gap-3 abs-tap text-left disabled:opacity-80"
-        style={{ background: "var(--gradient-hero)" }}
-      >
-        <div className="w-11 h-11 rounded-2xl bg-card flex items-center justify-center shadow-sm shrink-0">
-          {generatingQuiz || quizPreparing ? (
-            <Loader2 className="w-5 h-5 text-primary animate-spin" />
-          ) : (
-            <Brain className="w-5 h-5 text-primary" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold leading-snug">
-            {quizPreparing
-              ? "Preparing your quiz…"
-              : generatingQuiz
-              ? "Building your quiz…"
-              : entry.quiz
-              ? "Take 5-min quiz"
-              : "Take 5-min quiz"}
-          </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            {quizPreparing
-              ? "Personalized questions, ~10s"
-              : generatingQuiz
-              ? "Personalized questions, ~10s"
-              : entry.quiz
-              ? `${entry.quiz.questions.length} questions${entry.quizBestScore != null ? ` · best ${entry.quizBestScore}%` : ""}`
-              : "Mixed fill-blanks + MCQs · earn +5 readiness"}
-          </p>
-        </div>
-        {entry.quizPassed && (
-          <span className="text-[10px] font-medium text-success bg-success-soft px-2 py-1 rounded-full">Passed</span>
-        )}
-      </button>
-
-      <Section icon={Sparkles} label="Summary" color="bg-primary-soft text-primary">
-        <p className="text-sm text-foreground/80 leading-relaxed">{entry.summary}</p>
-      </Section>
+      <SummaryDeck entry={entry} />
 
       <Section icon={Lightbulb} label="Key concepts" color="bg-warning-soft text-warning">
         <ul className="space-y-2">
@@ -207,6 +167,48 @@ const Result = () => {
       <Section icon={Rocket} label="Next learning step" color="bg-warning-soft text-warning">
         <p className="text-sm text-foreground/85 leading-relaxed">{entry.nextStep}</p>
       </Section>
+
+      {/* Quiz CTA — last card */}
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mt-2 px-1">
+        Test yourself
+      </p>
+      <button
+        onClick={startQuiz}
+        disabled={generatingQuiz || quizPreparing}
+        className="w-full abs-card-elevated p-4 flex items-center gap-3 abs-tap text-left disabled:opacity-80"
+        style={{ background: "var(--gradient-hero)" }}
+      >
+        <div className="w-11 h-11 rounded-2xl bg-card flex items-center justify-center shadow-sm shrink-0">
+          {generatingQuiz || quizPreparing ? (
+            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          ) : (
+            <Brain className="w-5 h-5 text-primary" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold leading-snug">
+            {quizPreparing
+              ? "Preparing your quiz…"
+              : generatingQuiz
+              ? "Building your quiz…"
+              : entry.quiz
+              ? entry.quizPassed ? "Retake quiz" : "Take 5-min quiz"
+              : "Take 5-min quiz"}
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            {quizPreparing
+              ? "Personalized questions, ~10s"
+              : generatingQuiz
+              ? "Personalized questions, ~10s"
+              : entry.quiz
+              ? `${entry.quiz.questions.length} questions${entry.quizBestScore != null ? ` · best ${entry.quizBestScore}%` : ""}`
+              : "Mixed fill-blanks + MCQs · earn +5 readiness"}
+          </p>
+        </div>
+        {entry.quizPassed && (
+          <span className="text-[10px] font-medium text-success bg-success-soft px-2 py-1 rounded-full">Passed</span>
+        )}
+      </button>
 
       <Button onClick={() => navigate("/career")} className="w-full h-13 rounded-2xl mt-2 abs-tap" size="lg">
         <Target className="w-4 h-4 mr-2" /> See career impact
