@@ -2,147 +2,173 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ABS — editorial design system for a Gen-Z learning app.
-   Anchor: deep PLUM brand + chartreuse-LIME energy on warm CREAM.
-   Distinctly non-blue, non-Google. HSL only. 60 / 30 / 10. */
+/* ABS — futuristic AI academic OS.
+   Mustard-on-obsidian brand. No blues, no plums.
+   Glassmorphism, soft micro-glow, 14px sharp radii.
+   60 / 30 / 10 (neutrals / mustard / status). HSL only. */
 
 @layer base {
   :root {
-    /* Surfaces — warm cream */
-    --background: 36 30% 97%;
-    --surface-1: 36 30% 97%;
-    --surface-2: 36 24% 95%;
+    /* Light mode — warm ivory paper */
+    --background: 40 25% 98%;
+    --surface-1: 40 25% 98%;
+    --surface-2: 40 18% 96%;
     --surface-3: 0 0% 100%;
-    --foreground: 340 18% 12%;
+    --foreground: 220 22% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 340 18% 12%;
+    --card-foreground: 220 22% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 340 18% 12%;
+    --popover-foreground: 220 22% 10%;
 
-    /* Brand — deep plum */
-    --primary: 340 65% 28%;
-    --primary-foreground: 36 50% 97%;
-    --primary-soft: 340 40% 95%;
-    --primary-strong: 340 70% 22%;
+    /* Brand — mustard */
+    --primary: 42 95% 50%;
+    --primary-foreground: 220 22% 8%;
+    --primary-soft: 42 95% 94%;
+    --primary-strong: 38 95% 42%;
+    --primary-glow: 42 100% 65%;
 
-    /* Energy — chartreuse lime (the pop) */
-    --energy: 75 85% 55%;
-    --energy-foreground: 340 65% 18%;
-    --energy-soft: 75 70% 92%;
+    /* Champagne — secondary surface accent */
+    --secondary: 38 35% 92%;
+    --secondary-foreground: 220 22% 14%;
 
-    /* Success — forest moss */
-    --success: 155 50% 32%;
-    --success-foreground: 36 50% 97%;
-    --success-soft: 155 40% 93%;
+    --muted: 40 18% 94%;
+    --muted-foreground: 220 8% 42%;
 
-    /* Highlight — tangerine */
-    --warning: 22 95% 58%;
-    --warning-foreground: 22 60% 14%;
-    --warning-soft: 22 100% 95%;
+    --accent: 38 35% 92%;
+    --accent-foreground: 220 22% 14%;
 
-    /* Danger — brick red */
-    --danger: 8 75% 48%;
-    --danger-foreground: 36 50% 97%;
-    --danger-soft: 8 70% 95%;
+    /* Lime mist */
+    --success: 90 50% 38%;
+    --success-foreground: 40 25% 98%;
+    --success-soft: 90 40% 94%;
 
-    --secondary: 36 20% 94%;
-    --secondary-foreground: 340 18% 18%;
+    /* Burnt coral */
+    --warning: 12 80% 52%;
+    --warning-foreground: 40 25% 98%;
+    --warning-soft: 12 80% 95%;
 
-    --muted: 36 18% 93%;
-    --muted-foreground: 340 10% 38%;
+    /* Red ember */
+    --danger: 8 78% 48%;
+    --danger-foreground: 40 25% 98%;
+    --danger-soft: 8 78% 95%;
+    --destructive: 8 78% 48%;
+    --destructive-foreground: 40 25% 98%;
 
-    --accent: 340 40% 95%;
-    --accent-foreground: 340 65% 28%;
+    --border: 40 14% 88%;
+    --border-glow: 42 95% 50% / 0.14;
+    --input: 40 14% 88%;
+    --ring: 42 95% 50%;
 
-    --destructive: 8 75% 48%;
-    --destructive-foreground: 36 50% 97%;
+    --glass: 0 0% 100% / 0.65;
 
-    --border: 36 16% 88%;
-    --input: 36 16% 88%;
-    --ring: 75 85% 55%;
-
-    --radius: 16px;
+    --radius: 14px;
     --radius-sm: 10px;
-    --radius-lg: 22px;
+    --radius-lg: 18px;
 
     --shadow-card:
-      0 0 0 1px hsl(340 30% 14% / 0.05),
-      0 1px 2px hsl(340 30% 14% / 0.04),
-      0 8px 24px -8px hsl(340 30% 14% / 0.10);
+      0 0 0 1px hsl(220 25% 14% / 0.04),
+      0 1px 2px hsl(220 25% 14% / 0.05),
+      0 8px 24px -8px hsl(220 25% 14% / 0.10);
     --shadow-pop:
-      0 0 0 1px hsl(340 30% 14% / 0.06),
-      0 4px 12px hsl(340 30% 14% / 0.08),
-      0 24px 48px -16px hsl(340 30% 14% / 0.18);
-    /* Lime focus halo — doubles as the brand pop */
-    --shadow-ring: 0 0 0 3px hsl(75 85% 55% / 0.35);
+      0 0 0 1px hsl(220 25% 14% / 0.05),
+      0 4px 12px hsl(220 25% 14% / 0.10),
+      0 24px 48px -16px hsl(220 25% 14% / 0.20);
+    --shadow-ring: 0 0 0 3px hsl(42 95% 50% / 0.30);
+    --shadow-glow: 0 0 24px -4px hsl(42 100% 60% / 0.45);
 
-    /* Hero wash — cream → blush */
     --gradient-hero: linear-gradient(135deg,
-      hsl(36 50% 98%) 0%,
-      hsl(340 30% 96%) 100%);
-    /* CTA stays flat plum; lime lives on the bottom edge of the button */
+      hsl(40 35% 98%) 0%,
+      hsl(42 60% 95%) 100%);
     --gradient-cta: linear-gradient(180deg,
-      hsl(340 65% 30%) 0%,
-      hsl(340 70% 24%) 100%);
-    /* Progress: plum → lime (the brand story) */
+      hsl(42 95% 56%) 0%,
+      hsl(38 95% 46%) 100%);
     --gradient-progress: linear-gradient(90deg,
-      hsl(340 65% 35%) 0%,
-      hsl(75 85% 55%) 100%);
-    /* Brand mark — deep plum gradient */
+      hsl(42 95% 56%) 0%,
+      hsl(38 80% 70%) 100%);
     --gradient-brand: linear-gradient(135deg,
-      hsl(340 65% 28%) 0%,
-      hsl(340 70% 18%) 100%);
+      hsl(42 95% 58%) 0%,
+      hsl(38 95% 42%) 100%);
 
     --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .dark {
-    --background: 340 22% 7%;
-    --surface-1: 340 22% 7%;
-    --surface-2: 340 18% 10%;
-    --surface-3: 340 16% 13%;
-    --foreground: 36 24% 94%;
-    --card: 340 18% 12%;
-    --card-foreground: 36 24% 94%;
-    --popover: 340 18% 12%;
-    --popover-foreground: 36 24% 94%;
-    --primary: 340 60% 70%;
-    --primary-foreground: 340 22% 7%;
-    --primary-soft: 340 40% 18%;
-    --primary-strong: 340 60% 60%;
-    --energy: 75 85% 60%;
-    --energy-foreground: 340 22% 7%;
-    --energy-soft: 75 40% 16%;
-    --success: 155 50% 50%;
-    --success-foreground: 340 22% 7%;
-    --success-soft: 155 30% 14%;
-    --warning: 22 95% 64%;
-    --warning-foreground: 340 22% 7%;
-    --warning-soft: 22 50% 16%;
-    --danger: 8 75% 60%;
-    --danger-foreground: 340 22% 7%;
-    --danger-soft: 8 50% 18%;
-    --secondary: 340 16% 16%;
-    --secondary-foreground: 36 24% 94%;
-    --muted: 340 16% 16%;
-    --muted-foreground: 36 12% 64%;
-    --accent: 340 40% 22%;
-    --accent-foreground: 340 60% 80%;
-    --destructive: 8 75% 60%;
-    --destructive-foreground: 36 50% 97%;
-    --border: 340 16% 18%;
-    --input: 340 16% 18%;
-    --ring: 75 85% 60%;
+    /* Obsidian carbon canvas */
+    --background: 220 20% 6%;
+    --surface-1: 220 20% 6%;
+    --surface-2: 220 16% 9%;
+    --surface-3: 220 12% 13%;
+    --foreground: 40 25% 96%;
+
+    --card: 220 14% 11%;
+    --card-foreground: 40 25% 96%;
+
+    --popover: 220 14% 11%;
+    --popover-foreground: 40 25% 96%;
+
+    /* Mustard — slightly brighter on dark for legibility */
+    --primary: 42 95% 58%;
+    --primary-foreground: 220 22% 8%;
+    --primary-soft: 42 60% 14%;
+    --primary-strong: 42 95% 50%;
+    --primary-glow: 42 100% 60%;
+
+    --secondary: 38 12% 16%;
+    --secondary-foreground: 40 25% 96%;
+
+    --muted: 220 14% 14%;
+    --muted-foreground: 40 8% 64%;
+
+    --accent: 42 60% 16%;
+    --accent-foreground: 42 95% 70%;
+
+    --success: 90 55% 60%;
+    --success-foreground: 220 22% 8%;
+    --success-soft: 90 30% 14%;
+
+    --warning: 12 85% 62%;
+    --warning-foreground: 220 22% 8%;
+    --warning-soft: 12 50% 16%;
+
+    --danger: 8 82% 60%;
+    --danger-foreground: 220 22% 8%;
+    --danger-soft: 8 50% 16%;
+    --destructive: 8 82% 60%;
+    --destructive-foreground: 40 25% 96%;
+
+    --border: 220 14% 16%;
+    --border-glow: 42 95% 58% / 0.22;
+    --input: 220 14% 16%;
+    --ring: 42 95% 58%;
+
+    --glass: 220 16% 12% / 0.55;
+
     --shadow-card:
-      0 0 0 1px hsl(0 0% 100% / 0.05),
-      0 1px 2px hsl(0 0% 0% / 0.4),
-      0 8px 24px -8px hsl(0 0% 0% / 0.55);
+      0 0 0 1px hsl(0 0% 100% / 0.04),
+      0 1px 2px hsl(0 0% 0% / 0.50),
+      0 8px 24px -8px hsl(0 0% 0% / 0.60);
     --shadow-pop:
-      0 0 0 1px hsl(0 0% 100% / 0.07),
+      0 0 0 1px hsl(0 0% 100% / 0.06),
       0 4px 12px hsl(0 0% 0% / 0.55),
-      0 24px 48px -16px hsl(0 0% 0% / 0.75);
+      0 24px 48px -16px hsl(0 0% 0% / 0.80);
+    --shadow-ring: 0 0 0 3px hsl(42 95% 58% / 0.40);
+    --shadow-glow: 0 0 28px -4px hsl(42 100% 60% / 0.45);
+
+    --gradient-hero: radial-gradient(ellipse at top,
+      hsl(42 95% 50% / 0.10) 0%,
+      transparent 60%),
+      linear-gradient(180deg, hsl(220 20% 7%), hsl(220 20% 5%));
+    --gradient-cta: linear-gradient(180deg,
+      hsl(42 95% 60%) 0%,
+      hsl(38 95% 50%) 100%);
+    --gradient-progress: linear-gradient(90deg,
+      hsl(42 95% 60%) 0%,
+      hsl(38 80% 75%) 100%);
+    --gradient-brand: linear-gradient(135deg,
+      hsl(42 95% 60%) 0%,
+      hsl(38 95% 44%) 100%);
   }
 }
 
