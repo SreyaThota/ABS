@@ -64,7 +64,7 @@ const Onboarding = () => {
         <div className="w-9 h-9 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-md">
           <Sparkles className="w-4.5 h-4.5" />
         </div>
-        <p className="text-sm font-semibold tracking-tight">ABS · CareerOS AI</p>
+        <p className="text-sm font-semibold tracking-tight">ABS</p>
       </div>
 
       {step === 0 && (

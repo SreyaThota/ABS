@@ -32,7 +32,7 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-success flex items-center justify-center shadow-sm">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="hidden lg:block text-sm font-semibold tracking-tight">CareerOS</span>
+            <span className="hidden lg:block text-sm font-semibold tracking-tight">ABS</span>
           </div>
           <nav className="flex-1 px-2 lg:px-3 py-4 flex flex-col gap-1">
             {tabs.map((t) => (

@@ -72,7 +72,7 @@ serve(async (req) => {
     const level = profile?.level || "Beginner";
     const target = profile?.targetCareer || "general career";
 
-    const sys = `You are CareerOS Quiz Builder. Build a SHORT quiz (5-20 min, 6-8 questions) to test understanding of one concept.
+    const sys = `You are ABS Quiz Builder. Build a SHORT quiz (5-20 min, 6-8 questions) to test understanding of one concept.
 Rules:
 - Mix ~50/50 fill_blank and mcq.
 - fill_blank: use exactly "___" (3 underscores) for the blank. Answer must be 1-3 words, unambiguous.
