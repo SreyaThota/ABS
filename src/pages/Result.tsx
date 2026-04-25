@@ -73,28 +73,28 @@ const Result = () => {
   }
 
   return (
-    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-12 animate-fade-in space-y-3">
-      <header className="flex items-center justify-between mb-2">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground abs-tap">
+    <div className="px-5 md:px-0 pt-12 md:pt-10 pb-12 animate-fade-in space-y-4">
+      <header className="flex items-center justify-between mb-1">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground abs-tap">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <span className="text-xs px-2.5 py-1 rounded-full bg-success-soft text-success font-medium">
-          +{entry.readinessDelta} career pts
+        <span className="abs-chip bg-success-soft text-success font-semibold tabular-nums">
+          +{entry.readinessDelta} pts
         </span>
       </header>
 
-      <div className="mb-4">
+      <div className="mb-2">
         <div className="flex items-center gap-2">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Concept</p>
+          <p className="t-micro">Concept</p>
           <button
             onClick={() => { navigator.clipboard.writeText(entry.conceptId); toast.success("Concept ID copied"); }}
-            className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-secondary text-foreground/70 abs-tap inline-flex items-center gap-1"
+            className="t-mono px-2 py-0.5 rounded-md bg-muted text-foreground/70 abs-tap inline-flex items-center gap-1 hover:text-foreground"
             aria-label="Copy concept ID"
           >
             {entry.conceptId} <Copy className="w-2.5 h-2.5" />
           </button>
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight mt-1 leading-tight">{entry.title}</h1>
+        <h1 className="t-display mt-2">{entry.title}</h1>
       </div>
 
       <SummaryDeck entry={entry} />
