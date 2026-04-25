@@ -138,7 +138,7 @@ const Chat = () => {
 
   return (
     <div className="flex flex-col h-[100dvh] animate-fade-in">
-      <header className="px-5 pt-12 pb-3 flex items-center gap-3 border-b border-border bg-background/95 backdrop-blur-xl sticky top-0 z-10">
+      <header className="px-5 md:px-0 pt-12 md:pt-8 pb-3 flex items-center gap-3 border-b border-border bg-background/95 backdrop-blur-xl sticky top-0 z-10">
         <button onClick={() => navigate(-1)} className="abs-tap">
           <ArrowLeft className="w-5 h-5 text-muted-foreground" />
         </button>

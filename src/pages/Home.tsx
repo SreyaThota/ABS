@@ -46,7 +46,7 @@ const Home = () => {
   const firstName = profile?.name?.split(" ")[0] || "there";
 
   return (
-    <div className="px-5 pt-12 pb-6 animate-fade-in">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-6 animate-fade-in">
       <header className="flex items-center justify-between mb-6">
         <div>
           <p className="text-xs text-muted-foreground tracking-wide uppercase">{greet()}, {firstName}</p>
@@ -103,56 +103,58 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Today's tasks */}
-      <section className="mb-4">
-        <div className="flex items-center justify-between mb-3 px-1">
-          <h2 className="text-sm font-semibold tracking-tight">Tasks for today</h2>
-          <span className="text-xs text-muted-foreground">{todayTasks.length} pending</span>
-        </div>
-        {todayTasks.length === 0 ? (
-          <div className="abs-card p-5 text-center">
-            <CheckCircle2 className="w-8 h-8 text-success mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">All caught up. Add new learning to grow.</p>
+      <div className="md:grid md:grid-cols-2 md:gap-4">
+        {/* Today's tasks */}
+        <section className="mb-4 md:mb-0">
+          <div className="flex items-center justify-between mb-3 px-1">
+            <h2 className="text-sm font-semibold tracking-tight">Tasks for today</h2>
+            <span className="text-xs text-muted-foreground">{todayTasks.length} pending</span>
           </div>
-        ) : (
-          <div className="space-y-2">
-            {todayTasks.map((t) => (
-              <div key={t.entryId + t.idx} className="abs-card p-3.5 flex gap-3 items-start abs-tap">
-                <div className="w-5 h-5 rounded-md border-2 border-primary mt-0.5 shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium leading-snug">{t.text}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">From · {t.source}</p>
+          {todayTasks.length === 0 ? (
+            <div className="abs-card p-5 text-center">
+              <CheckCircle2 className="w-8 h-8 text-success mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">All caught up. Add new learning to grow.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {todayTasks.map((t) => (
+                <div key={t.entryId + t.idx} className="abs-card p-3.5 flex gap-3 items-start abs-tap">
+                  <div className="w-5 h-5 rounded-md border-2 border-primary mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-snug">{t.text}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5 truncate">From · {t.source}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Recent learnings */}
-      {entries.length > 0 && (
-        <section>
-          <h2 className="text-sm font-semibold tracking-tight mb-3 px-1">Recent learnings</h2>
-          <div className="space-y-2">
-            {entries.slice(0, 3).map((e) => (
-              <button
-                key={e.id}
-                onClick={() => navigate(`/result/${e.id}`)}
-                className="w-full abs-card p-4 flex gap-3 items-center text-left abs-tap"
-              >
-                <div className="w-10 h-10 rounded-xl bg-success-soft flex items-center justify-center shrink-0">
-                  <BookOpen className="w-4.5 h-4.5 text-success" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{e.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">{e.skills.slice(0, 2).join(" · ")}</p>
-                </div>
-                <span className="text-xs font-medium text-success">+{e.readinessDelta}</span>
-              </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
-      )}
+
+        {/* Recent learnings */}
+        {entries.length > 0 && (
+          <section>
+            <h2 className="text-sm font-semibold tracking-tight mb-3 px-1">Recent learnings</h2>
+            <div className="space-y-2">
+              {entries.slice(0, 3).map((e) => (
+                <button
+                  key={e.id}
+                  onClick={() => navigate(`/result/${e.id}`)}
+                  className="w-full abs-card p-4 flex gap-3 items-center text-left abs-tap"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-success-soft flex items-center justify-center shrink-0">
+                    <BookOpen className="w-4.5 h-4.5 text-success" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{e.title}</p>
+                    <p className="text-xs text-muted-foreground truncate">{e.skills.slice(0, 2).join(" · ")}</p>
+                  </div>
+                  <span className="text-xs font-medium text-success">+{e.readinessDelta}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 };

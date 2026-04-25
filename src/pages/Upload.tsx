@@ -103,7 +103,7 @@ const Upload = () => {
 
   if (loading) {
     return (
-      <div className="px-5 pt-24 animate-fade-in">
+      <div className="px-5 md:px-0 pt-24 md:pt-12 animate-fade-in">
         <div className="abs-card-elevated p-8 text-center" style={{ background: "var(--gradient-hero)" }}>
           <div className="w-14 h-14 rounded-2xl bg-card mx-auto flex items-center justify-center shadow-md mb-5">
             <Sparkles className="w-6 h-6 text-primary" />
@@ -117,7 +117,7 @@ const Upload = () => {
   }
 
   return (
-    <div className="px-5 pt-12 animate-fade-in">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 animate-fade-in">
       <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground mb-4 abs-tap">
         <ArrowLeft className="w-4 h-4" /> Back
       </button>

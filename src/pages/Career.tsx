@@ -30,7 +30,7 @@ const Career = () => {
   }
 
   return (
-    <div className="px-5 pt-12 animate-fade-in">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 animate-fade-in">
       <header className="mb-6">
         <p className="text-xs text-muted-foreground tracking-wide uppercase">Career Tracker</p>
         <h1 className="text-2xl font-semibold tracking-tight mt-1">Your trajectory</h1>

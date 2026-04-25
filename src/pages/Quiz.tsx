@@ -89,7 +89,7 @@ const Quiz = () => {
   if (done) {
     const passed = scorePct >= 70;
     return (
-      <div className="px-5 pt-12 pb-12 animate-fade-in">
+      <div className="px-5 md:px-0 pt-12 md:pt-8 pb-12 animate-fade-in">
         <header className="flex items-center justify-between mb-6">
           <button onClick={() => navigate(`/result/${id}`)} className="flex items-center gap-1 text-sm text-muted-foreground abs-tap">
             <ArrowLeft className="w-4 h-4" /> Concept
@@ -147,7 +147,7 @@ const Quiz = () => {
   const correct = revealed && isCorrect(q, q.type === "mcq" ? Number(input) : input);
 
   return (
-    <div className="px-5 pt-12 pb-12 animate-fade-in">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-12 animate-fade-in">
       <header className="flex items-center justify-between mb-4">
         <button onClick={() => navigate(`/result/${id}`)} className="flex items-center gap-1 text-sm text-muted-foreground abs-tap">
           <ArrowLeft className="w-4 h-4" /> Exit

@@ -73,7 +73,7 @@ const Result = () => {
   }
 
   return (
-    <div className="px-5 pt-12 pb-12 animate-fade-in space-y-3">
+    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-12 animate-fade-in space-y-3">
       <header className="flex items-center justify-between mb-2">
         <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground abs-tap">
           <ArrowLeft className="w-4 h-4" /> Back
@@ -132,41 +132,43 @@ const Result = () => {
         </div>
       </Section>
 
-      <Section icon={Briefcase} label="Career mapping" color="bg-primary-soft text-primary">
-        <div className="flex flex-wrap gap-2">
-          {entry.careerRoles.map((r) => (
-            <span key={r} className="text-xs px-3 py-1.5 rounded-full bg-secondary text-foreground/80 font-medium">
-              {r}
-            </span>
-          ))}
-        </div>
-        <div className="mt-3 pt-3 border-t border-border">
-          <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-2">Skills built</p>
-          <div className="flex flex-wrap gap-1.5">
-            {entry.skills.map((s) => (
-              <span key={s} className="text-xs px-2.5 py-1 rounded-lg bg-success-soft text-success font-medium">
-                {s}
+      <div className="md:grid md:grid-cols-2 md:gap-3 space-y-3 md:space-y-0">
+        <Section icon={Briefcase} label="Career mapping" color="bg-primary-soft text-primary">
+          <div className="flex flex-wrap gap-2">
+            {entry.careerRoles.map((r) => (
+              <span key={r} className="text-xs px-3 py-1.5 rounded-full bg-secondary text-foreground/80 font-medium">
+                {r}
               </span>
             ))}
           </div>
-        </div>
-      </Section>
+          <div className="mt-3 pt-3 border-t border-border">
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-2">Skills built</p>
+            <div className="flex flex-wrap gap-1.5">
+              {entry.skills.map((s) => (
+                <span key={s} className="text-xs px-2.5 py-1 rounded-lg bg-success-soft text-success font-medium">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Section>
 
-      <Section icon={FileText} label="Resume bullet" color="bg-danger-soft text-danger">
-        <p className="text-sm font-medium leading-relaxed text-foreground/90 italic">
-          "{entry.resumeBullet}"
-        </p>
-        <button
-          onClick={() => { navigator.clipboard.writeText(entry.resumeBullet); toast.success("Copied to clipboard"); }}
-          className="mt-3 text-xs text-primary font-medium abs-tap"
-        >
-          Copy bullet →
-        </button>
-      </Section>
+        <Section icon={FileText} label="Resume bullet" color="bg-danger-soft text-danger">
+          <p className="text-sm font-medium leading-relaxed text-foreground/90 italic">
+            "{entry.resumeBullet}"
+          </p>
+          <button
+            onClick={() => { navigator.clipboard.writeText(entry.resumeBullet); toast.success("Copied to clipboard"); }}
+            className="mt-3 text-xs text-primary font-medium abs-tap"
+          >
+            Copy bullet →
+          </button>
+        </Section>
 
-      <Section icon={Rocket} label="Next learning step" color="bg-warning-soft text-warning">
-        <p className="text-sm text-foreground/85 leading-relaxed">{entry.nextStep}</p>
-      </Section>
+        <Section icon={Rocket} label="Next learning step" color="bg-warning-soft text-warning">
+          <p className="text-sm text-foreground/85 leading-relaxed">{entry.nextStep}</p>
+        </Section>
+      </div>
 
       {/* Quiz CTA — last card */}
       <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mt-2 px-1">
