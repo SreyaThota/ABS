@@ -46,15 +46,15 @@ const Home = () => {
   const firstName = profile?.name?.split(" ")[0] || "there";
 
   return (
-    <div className="px-5 md:px-0 pt-12 md:pt-8 pb-6 animate-fade-in">
-      <header className="flex items-center justify-between mb-6">
+    <div className="px-5 md:px-0 pt-12 md:pt-10 pb-6 animate-fade-in">
+      <header className="flex items-center justify-between mb-7">
         <div>
-          <p className="text-xs text-muted-foreground tracking-wide uppercase">{greet()}, {firstName}</p>
-          <h1 className="text-2xl font-semibold tracking-tight mt-1">Today's impact</h1>
+          <p className="t-micro">{greet()}, {firstName}</p>
+          <h1 className="t-display mt-1.5">Today's impact</h1>
         </div>
         <button
           onClick={() => setProfileOpen(true)}
-          className="w-11 h-11 rounded-full bg-gradient-to-br from-primary via-danger to-warning flex items-center justify-center text-primary-foreground font-semibold shadow-md abs-tap"
+          className="w-10 h-10 rounded-full bg-primary-soft text-primary font-semibold flex items-center justify-center ring-1 ring-border abs-tap abs-focus"
           aria-label="Edit profile"
         >
           {initial}
@@ -62,45 +62,56 @@ const Home = () => {
       </header>
       <ProfileSheet open={profileOpen} onOpenChange={setProfileOpen} />
 
-      {/* Career ring hero */}
-      <section className="abs-card-elevated p-6 mb-4 flex items-center gap-5"
-        style={{ background: "var(--gradient-hero)" }}>
-        <ReadinessRing value={readiness} />
-        <div className="flex-1">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Career Impact Engine</p>
-          <p className="text-base font-medium leading-snug mt-1">
-            Every lecture moves your career forward.
-          </p>
-          <div className="flex items-center gap-3 mt-3 text-xs">
-            <span className="flex items-center gap-1.5 text-success font-medium">
-              <Flame className="w-3.5 h-3.5" />
-              +{entries.reduce((s, e) => s + (e.readinessDelta || 0), 0)} pts
-            </span>
-            {quizzesPassed > 0 && (
-              <span className="text-muted-foreground">· {quizzesPassed} quiz{quizzesPassed === 1 ? "" : "es"} passed</span>
-            )}
+      {/* Career ring hero — calm, premium */}
+      <section className="abs-card-elevated p-6 mb-5 relative overflow-hidden">
+        <div
+          className="absolute -top-20 -right-20 w-64 h-64 rounded-full opacity-60 pointer-events-none"
+          style={{ background: "radial-gradient(closest-side, hsl(var(--primary) / 0.12), transparent)" }}
+        />
+        <div className="relative flex items-center gap-5">
+          <ReadinessRing value={readiness} />
+          <div className="flex-1 min-w-0">
+            <p className="t-micro">Career readiness</p>
+            <p className="t-h1 mt-1.5 leading-snug">
+              Every lecture moves you forward.
+            </p>
+            <div className="flex items-center gap-3 mt-3 text-[12px]">
+              <span className="inline-flex items-center gap-1.5 text-success font-semibold tabular-nums">
+                <Flame className="w-3.5 h-3.5" />
+                +{entries.reduce((s, e) => s + (e.readinessDelta || 0), 0)} pts
+              </span>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <span className="text-muted-foreground tabular-nums">
+                {entries.length} concept{entries.length === 1 ? "" : "s"}
+              </span>
+              {quizzesPassed > 0 && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-border" />
+                  <span className="text-muted-foreground tabular-nums">{quizzesPassed} passed</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Quick upload */}
+      {/* Primary CTA */}
       <Button
         onClick={() => navigate("/upload")}
-        className="w-full h-14 rounded-2xl text-base font-medium shadow-lg shadow-primary/20 mb-4 abs-tap"
+        size="lg"
+        className="w-full h-14 mb-5"
       >
-        <Upload className="w-5 h-5 mr-2" /> Upload lecture
-        <ArrowRight className="w-4 h-4 ml-auto opacity-80" />
+        <Upload className="w-[18px] h-[18px]" />
+        <span>Upload lecture</span>
+        <ArrowRight className="w-4 h-4 ml-auto opacity-90" />
       </Button>
 
       {/* AI insight */}
-      <section className="abs-card p-4 mb-4 flex gap-3 items-start">
-        <div className="w-9 h-9 rounded-xl bg-primary-soft flex items-center justify-center shrink-0">
-          <Sparkles className="w-4.5 h-4.5 text-primary" />
-        </div>
-        <div>
-          <p className="text-xs font-medium text-primary mb-0.5">AI insight</p>
-          <p className="text-sm text-foreground/80 leading-relaxed">{insight}</p>
-        </div>
+      <section className="abs-card p-4 mb-5 flex gap-3 items-start">
+        <span className="abs-chip bg-primary-soft text-primary mt-0.5">
+          <Sparkles className="w-3 h-3" /> AI
+        </span>
+        <p className="t-body italic text-foreground/85 flex-1">{insight}</p>
       </section>
 
       <div className="md:grid md:grid-cols-2 md:gap-4">
