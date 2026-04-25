@@ -16,9 +16,20 @@ export interface LearningEntry {
   sourcePreview: string;
 }
 
+export interface LearnerProfile {
+  name: string;
+  stage: "High school" | "Undergrad" | "Postgrad" | "Working pro";
+  targetCareer: string;
+  level: "Beginner" | "Intermediate" | "Advanced";
+  interests: string[];
+}
+
 interface State {
   entries: LearningEntry[];
   readiness: number;
+  profile: LearnerProfile | null;
+  hasOnboarded: boolean;
+  setProfile: (p: LearnerProfile) => void;
   addEntry: (e: Omit<LearningEntry, "id" | "createdAt">) => LearningEntry;
   toggleTask: (entryId: string, idx: number) => void;
   reset: () => void;
@@ -29,6 +40,9 @@ export const useLearningStore = create<State>()(
     (set, get) => ({
       entries: [],
       readiness: 12,
+      profile: null,
+      hasOnboarded: false,
+      setProfile: (p) => set({ profile: p, hasOnboarded: true }),
       addEntry: (e) => {
         const entry: LearningEntry = {
           ...e,
@@ -54,7 +68,7 @@ export const useLearningStore = create<State>()(
               : en
           ),
         }),
-      reset: () => set({ entries: [], readiness: 12 }),
+      reset: () => set({ entries: [], readiness: 12, profile: null, hasOnboarded: false }),
     }),
     { name: "abs-careeros" }
   )
