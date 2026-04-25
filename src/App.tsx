@@ -11,6 +11,7 @@ import Result from "./pages/Result";
 import Career from "./pages/Career";
 import Resume from "./pages/Resume";
 import Onboarding from "./pages/Onboarding";
+import Quiz from "./pages/Quiz";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/upload" element={<Upload />} />
       <Route path="/result/:id" element={<Result />} />
+      <Route path="/quiz/:id" element={<Quiz />} />
       <Route path="/career" element={<Career />} />
       <Route path="/resume" element={<Resume />} />
       <Route path="*" element={<NotFound />} />

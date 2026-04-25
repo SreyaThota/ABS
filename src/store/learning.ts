@@ -1,8 +1,19 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { makeConceptId } from "@/lib/conceptId";
+
+export type QuizQuestion =
+  | { type: "fill_blank"; prompt: string; answer: string; explanation?: string }
+  | { type: "mcq"; prompt: string; options: string[]; correctIndex: number; explanation?: string };
+
+export interface Quiz {
+  questions: QuizQuestion[];
+  createdAt: number;
+}
 
 export interface LearningEntry {
   id: string;
+  conceptId: string;
   createdAt: number;
   title: string;
   summary: string;
@@ -14,6 +25,10 @@ export interface LearningEntry {
   nextStep: string;
   readinessDelta: number;
   sourcePreview: string;
+  quiz?: Quiz;
+  quizBestScore?: number;
+  quizAttempts?: number;
+  quizPassed?: boolean;
 }
 
 export interface LearnerProfile {
@@ -30,8 +45,10 @@ interface State {
   profile: LearnerProfile | null;
   hasOnboarded: boolean;
   setProfile: (p: LearnerProfile) => void;
-  addEntry: (e: Omit<LearningEntry, "id" | "createdAt">) => LearningEntry;
+  addEntry: (e: Omit<LearningEntry, "id" | "createdAt" | "conceptId">) => LearningEntry;
   toggleTask: (entryId: string, idx: number) => void;
+  attachQuiz: (entryId: string, quiz: Quiz) => void;
+  recordQuizScore: (entryId: string, scorePct: number) => { firstPass: boolean };
   reset: () => void;
 }
 
@@ -47,6 +64,7 @@ export const useLearningStore = create<State>()(
         const entry: LearningEntry = {
           ...e,
           id: crypto.randomUUID(),
+          conceptId: makeConceptId(e.title),
           createdAt: Date.now(),
         };
         set({
@@ -68,6 +86,33 @@ export const useLearningStore = create<State>()(
               : en
           ),
         }),
+      attachQuiz: (entryId, quiz) =>
+        set({
+          entries: get().entries.map((en) =>
+            en.id === entryId ? { ...en, quiz } : en
+          ),
+        }),
+      recordQuizScore: (entryId, scorePct) => {
+        const en = get().entries.find((x) => x.id === entryId);
+        if (!en) return { firstPass: false };
+        const prevBest = en.quizBestScore ?? 0;
+        const passedNow = scorePct >= 70;
+        const firstPass = passedNow && !en.quizPassed;
+        set({
+          entries: get().entries.map((x) =>
+            x.id === entryId
+              ? {
+                  ...x,
+                  quizAttempts: (x.quizAttempts || 0) + 1,
+                  quizBestScore: Math.max(prevBest, scorePct),
+                  quizPassed: x.quizPassed || passedNow,
+                }
+              : x
+          ),
+          readiness: firstPass ? Math.min(100, get().readiness + 5) : get().readiness,
+        });
+        return { firstPass };
+      },
       reset: () => set({ entries: [], readiness: 12, profile: null, hasOnboarded: false }),
     }),
     { name: "abs-careeros" }

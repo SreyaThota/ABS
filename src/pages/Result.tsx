@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLearningStore } from "@/store/learning";
-import { ArrowLeft, Briefcase, CheckCircle2, Lightbulb, Rocket, Target, FileText, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft, Briefcase, CheckCircle2, Lightbulb, Rocket, Target, FileText, Sparkles, Brain, Loader2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -22,6 +24,38 @@ const Result = () => {
   const navigate = useNavigate();
   const entry = useLearningStore((s) => s.entries.find((e) => e.id === id));
   const toggleTask = useLearningStore((s) => s.toggleTask);
+  const attachQuiz = useLearningStore((s) => s.attachQuiz);
+  const profile = useLearningStore((s) => s.profile);
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
+
+  const startQuiz = async () => {
+    if (!entry) return;
+    if (entry.quiz?.questions?.length) {
+      navigate(`/quiz/${entry.id}`);
+      return;
+    }
+    setGeneratingQuiz(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-quiz", {
+        body: {
+          content: entry.summary + "\n\n" + entry.keyConcepts.join("\n") + "\n\n" + entry.sourcePreview,
+          title: entry.title,
+          keyConcepts: entry.keyConcepts,
+          profile,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      const questions = data?.questions || [];
+      if (questions.length === 0) throw new Error("No questions generated");
+      attachQuiz(entry.id, { questions, createdAt: Date.now() });
+      navigate(`/quiz/${entry.id}`);
+    } catch (e: any) {
+      toast.error(e.message || "Couldn't build quiz");
+    } finally {
+      setGeneratingQuiz(false);
+    }
+  };
 
   if (!entry) {
     return (
@@ -44,9 +78,49 @@ const Result = () => {
       </header>
 
       <div className="mb-4">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">AI Result</p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Concept</p>
+          <button
+            onClick={() => { navigator.clipboard.writeText(entry.conceptId); toast.success("Concept ID copied"); }}
+            className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-secondary text-foreground/70 abs-tap inline-flex items-center gap-1"
+            aria-label="Copy concept ID"
+          >
+            {entry.conceptId} <Copy className="w-2.5 h-2.5" />
+          </button>
+        </div>
         <h1 className="text-2xl font-semibold tracking-tight mt-1 leading-tight">{entry.title}</h1>
       </div>
+
+      {/* Quiz CTA */}
+      <button
+        onClick={startQuiz}
+        disabled={generatingQuiz}
+        className="w-full abs-card-elevated p-4 flex items-center gap-3 abs-tap text-left disabled:opacity-70"
+        style={{ background: "var(--gradient-hero)" }}
+      >
+        <div className="w-11 h-11 rounded-2xl bg-card flex items-center justify-center shadow-sm shrink-0">
+          {generatingQuiz ? (
+            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          ) : (
+            <Brain className="w-5 h-5 text-primary" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold leading-snug">
+            {entry.quiz ? "Retake quiz" : "Take 5-min quiz"}
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            {generatingQuiz
+              ? "Building personalized questions…"
+              : entry.quiz
+              ? `${entry.quiz.questions.length} questions${entry.quizBestScore != null ? ` · best ${entry.quizBestScore}%` : ""}`
+              : "Mixed fill-blanks + MCQs · earn +5 readiness"}
+          </p>
+        </div>
+        {entry.quizPassed && (
+          <span className="text-[10px] font-medium text-success bg-success-soft px-2 py-1 rounded-full">Passed</span>
+        )}
+      </button>
 
       <Section icon={Sparkles} label="Summary" color="bg-primary-soft text-primary">
         <p className="text-sm text-foreground/80 leading-relaxed">{entry.summary}</p>
