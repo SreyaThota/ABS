@@ -54,7 +54,7 @@ const Home = () => {
         </div>
         <button
           onClick={() => setProfileOpen(true)}
-          className="w-10 h-10 rounded-full bg-primary text-primary-foreground font-semibold flex items-center justify-center ring-1 ring-energy/40 abs-tap abs-focus"
+          className="w-10 h-10 rounded-full bg-primary text-primary-foreground font-semibold flex items-center justify-center abs-microglow abs-tap abs-focus"
           aria-label="Edit profile"
         >
           {initial}

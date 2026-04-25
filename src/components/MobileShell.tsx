@@ -12,18 +12,17 @@ const tabs = [
 ];
 
 const BrandMark = () => (
-  // Editorial brand mark: italic serif glyph + lime "live" dot
-  <div className="abs-brand-mark relative" style={{ background: "var(--gradient-brand)" }}>
+  // Obsidian tile, italic serif "a" in mustard, soft halo
+  <div
+    className="relative w-8 h-8 rounded-[10px] flex items-center justify-center abs-microglow"
+    style={{ background: "hsl(var(--surface-3))", border: "1px solid hsl(var(--border-glow))" }}
+  >
     <span
-      className="text-primary-foreground italic font-bold leading-none"
+      className="text-primary italic font-bold leading-none"
       style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: "18px" }}
     >
       a
     </span>
-    <span
-      className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-energy"
-      style={{ boxShadow: "0 0 6px hsl(var(--energy) / 0.7)" }}
-    />
   </div>
 );
 
@@ -84,7 +83,7 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
           </nav>
 
           <div className="hidden lg:flex items-center gap-2 px-5 py-4 border-t border-border/70">
-            <span className="w-1.5 h-1.5 rounded-full bg-energy" style={{ boxShadow: "0 0 6px hsl(var(--energy) / 0.7)" }} />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" style={{ boxShadow: "0 0 6px hsl(var(--primary) / 0.7)" }} />
             <span className="text-[11px] text-muted-foreground">v1.0 · all systems go</span>
           </div>
         </aside>
@@ -109,7 +108,10 @@ export const MobileShell = ({ children }: { children: React.ReactNode }) => {
 
       {/* Mobile flush bottom bar */}
       {!hideMobileNav && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-card/95 backdrop-blur-xl border-t border-border">
+        <nav
+          className="md:hidden fixed bottom-0 left-0 right-0 z-30 backdrop-blur-xl"
+          style={{ background: "hsl(var(--glass))", borderTop: "1px solid hsl(var(--border-glow))" }}
+        >
           <div
             className="flex items-stretch justify-around px-1 pt-1.5"
             style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6px)" }}
