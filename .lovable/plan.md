@@ -1,65 +1,74 @@
-# Auto-Quiz + Personalized Career Chat Coach
+## Goal
 
-Two additions to make the app feel like a true career mentor:
+Make the Result page feel like a "visual study deck" — turn the summary into bite-sized animated slides/bullets, ensure it covers all key points, and move the Quiz CTA to the very bottom of the page.
 
-## 1. Auto-generate the quiz right after the summary
+## Changes
 
-Right now, after upload → summary, the user has to tap "Take 5-min quiz" and wait for it to generate. We'll generate the quiz **automatically in the background** as soon as the summary is created, so when the user lands on the Result page the quiz is already ready (or finishing up).
+### 1. Reorder Result page (`src/pages/Result.tsx`)
 
-**Changes:**
-- `src/pages/Upload.tsx` — after `addEntry(...)` succeeds and we have an `entry.id`, fire a non-blocking call to `generate-quiz` and `attachQuiz(entry.id, ...)` when it returns. We still navigate to Result immediately so the user isn't blocked.
-- `src/pages/Result.tsx` — quiz CTA card shows three states:
-  - **Generating…** (spinner + "Building your quiz…") — disabled, tap is a no-op
-  - **Ready** (Brain icon + "Take 5-min quiz · N questions")
-  - **Retake** (with best score)
-- If the background generation fails silently, the existing on-demand `startQuiz()` still works as a fallback.
+New section order, top → bottom:
+1. Header (back + readiness pill)
+2. Concept ID + Title
+3. **Summary Deck** (new visual component — replaces the plain summary card)
+4. Key concepts
+5. Action tasks
+6. Career mapping + Skills
+7. Resume bullet
+8. Next learning step
+9. **Quiz CTA** (moved here — last card on the page)
+10. "See career impact" button
 
-## 2. Personalized Career Chat Coach
+Remove the Quiz CTA from its current position right under the title.
 
-A new chat screen where the user can ask things like:
-- *"Am I a good fit for a Data Scientist role?"*
-- *"What should I learn next to become a Security Analyst?"*
-- *"Which of my concepts apply to my target career?"*
-- *"What's missing from my resume for this role?"*
+### 2. New Summary Deck component (`src/components/SummaryDeck.tsx`)
 
-The coach answers using **(a) the learner's profile** (target career, level, stage, interests) and **(b) every concept they've uploaded** (titles, summaries, skills, careerRoles, quiz pass status). So replies are grounded in *their* actual learning — not generic advice.
+A swipeable mini-slide deck that turns the summary into a visual, presentation-style breakdown covering all points — not a wall of text.
 
-### User flow
-- New "Coach" tab in the bottom nav (replacing/joining nav as a 5th icon).
-- Tap → `/chat` screen: clean message thread (user bubbles right, coach bubbles left), input at bottom, streaming responses with markdown rendering.
-- Welcome message suggests 3 starter questions tailored to their profile (e.g. *"Am I ready for {targetCareer}?"*, *"What skills am I missing?"*, *"Pick my next concept"*).
-- Conversation persists in memory for the session (not stored in DB — keeps it private + simple).
+Structure: 4 auto-built slides from existing entry data, no new AI call needed.
 
-### Backend (new edge function `career-chat`)
-- Streams responses (SSE) from Lovable AI (`google/gemini-2.5-flash`).
-- System prompt = **"You are CareerOS Coach"** + injected context block:
-  ```
-  LEARNER PROFILE: name, stage, target career, level, interests
-  LEARNING HISTORY (N concepts):
-    1. {title} [{conceptId}] — skills: ..., maps to: ..., quiz: passed/not taken
-       summary: ...
-    2. ...
-  ```
-- Coach behavior rules baked in: be honest about gaps, cite specific concept IDs when relevant, give concrete next steps, never make up skills the user doesn't have, calibrate tone to their level.
-- Handles 429 / 402 with friendly toast messages on the client.
+```text
+┌─────────────────────────┐
+│  ●○○○         Slide 1/4 │
+│                         │
+│   [icon]                │
+│   The Big Idea          │
+│   {summary sentence 1}  │
+│                         │
+│   ◀  swipe / tap  ▶     │
+└─────────────────────────┘
+```
 
-### Frontend
-- New `src/pages/Chat.tsx` — message list + composer, streaming SSE parser (token-by-token rendering), markdown via `react-markdown`.
-- New `src/components/ChatMessage.tsx` — bubble styling consistent with the app's card design.
-- Add `react-markdown` dependency.
-- New route `/chat` in `src/App.tsx`.
-- `src/components/MobileShell.tsx` — add "Coach" tab (MessageCircle icon).
+Slides generated client-side from `entry`:
+- **Slide 1 — The Big Idea**: first sentence of `summary` + Sparkles icon, gradient bg
+- **Slide 2 — How it works**: remaining summary sentences as 2–3 short bullets (split on `. `), Lightbulb icon
+- **Slide 3 — Must-know**: all `keyConcepts` as animated bullet list (staggered fade-in), Brain icon
+- **Slide 4 — Why it matters**: top `careerRoles` + first `skills` as chips, plus `nextStep` as a one-liner, Rocket icon
+
+Interactions:
+- Swipe left/right (touch) + left/right arrow buttons + dot indicators (tap to jump)
+- Each slide animates in with `animate-fade-in` + `animate-scale-in`
+- Bullets inside Slide 3 stagger using `style={{ animationDelay: ... }}`
+- Auto-height card; fixed min-height ~280px so transitions feel stable
+- "View as text" toggle at the bottom expands a plain `<p>` of the full summary for accessibility / users who prefer text
+
+This gives the "PPT slide / animation" feel the user asked for, while guaranteeing all points are covered (summary + key concepts + career + next step are all surfaced across the 4 slides).
+
+### 3. Quiz CTA — relocate, keep behavior
+
+Move the existing Quiz button JSX block to just above the "See career impact" button. No logic changes — `startQuiz`, `quizPreparing`, `generatingQuiz`, and the three states (Generating / Ready / Retake) all stay identical. Just a new position + a small section label above it: "Test yourself".
 
 ## Technical notes
 
-- **Streaming**: client uses `fetch` against `${VITE_SUPABASE_URL}/functions/v1/career-chat` with the publishable key, parses SSE line-by-line, updates the last assistant message progressively.
-- **Context size**: cap at last 30 concepts to stay well under model context. For each concept include only title, conceptId, summary, skills, careerRoles, quizPassed — not the full source text.
-- **Privacy**: chat history lives in component state only; no DB tables added. Resets on page reload.
-- **Background quiz generation**: `Upload.tsx` does `void supabase.functions.invoke("generate-quiz", ...).then(...)` *before* navigating; the `attachQuiz` call hits the persisted store so Result picks it up reactively.
+- Pure client-side; no edge function or DB changes.
+- Sentence splitting uses a simple regex `/(?<=[.!?])\s+/` with a fallback if summary has only one sentence (then Slide 2 becomes a "Quick recap" of `keyConcepts.slice(0,2)`).
+- Swipe handled via `onTouchStart` / `onTouchEnd` deltas; no extra dependency.
+- All animation classes (`animate-fade-in`, `animate-scale-in`, `animate-slide-up`) already exist in the Tailwind config.
+- No changes to store, routes, edge functions, or other pages.
 
 ## Out of scope
-- Persisting chat across sessions (can add later with a `chat_messages` table if requested).
-- Voice input.
-- Coach being able to *create* new learning entries from chat.
+
+- Generating a separate AI "slide script" (current entry data already covers all points).
+- Persisting deck state.
+- Auto-advancing slides.
 
 Approve to build.
