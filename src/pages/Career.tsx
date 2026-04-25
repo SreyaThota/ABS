@@ -28,9 +28,6 @@ const Career = () => {
       ...suggestedRoles.filter((r) => r.name.toLowerCase() !== target.toLowerCase()),
     ];
   }
-  const skills = allSkills(entries);
-  const roles = allRoles(entries);
-  const haveSkills = new Set(skills.map((s) => s.name.toLowerCase()));
 
   return (
     <div className="px-5 pt-12 animate-fade-in">
@@ -92,15 +89,23 @@ const Career = () => {
       <section className="space-y-3 mb-4">
         <h2 className="text-sm font-semibold px-1">Suggested career paths</h2>
         {suggestedRoles.map((role) => {
+          const isTarget = target && role.name.toLowerCase() === target.toLowerCase();
           const matched = role.required.filter((r) => haveSkills.has(r.toLowerCase()));
           const missing = role.required.filter((r) => !haveSkills.has(r.toLowerCase()));
           const pct = Math.round((matched.length / role.required.length) * 100);
           const userInterest = roles.find((r) => r.name.toLowerCase() === role.name.toLowerCase());
           return (
-            <div key={role.name} className="abs-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold">{role.name}</p>
-                <span className="text-xs font-medium text-primary">{pct}% match</span>
+            <div key={role.name} className={`abs-card p-4 ${isTarget ? "ring-2 ring-primary/40" : ""}`}>
+              <div className="flex items-center justify-between mb-2 gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <p className="text-sm font-semibold truncate">{role.name}</p>
+                  {isTarget && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary text-primary-foreground font-medium flex items-center gap-1 shrink-0">
+                      <Star className="w-2.5 h-2.5" /> Your path
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs font-medium text-primary shrink-0">{pct}% match</span>
               </div>
               <div className="h-1.5 bg-muted rounded-full overflow-hidden mb-3">
                 <div
