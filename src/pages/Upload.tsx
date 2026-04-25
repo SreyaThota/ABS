@@ -18,6 +18,7 @@ const loadingPhases = [
 const Upload = () => {
   const navigate = useNavigate();
   const addEntry = useLearningStore((s) => s.addEntry);
+  const profile = useLearningStore((s) => s.profile);
   const [text, setText] = useState("");
   const [filename, setFilename] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ const Upload = () => {
     const interval = setInterval(() => setPhase((p) => (p + 1) % loadingPhases.length), 1100);
     try {
       const { data, error } = await supabase.functions.invoke("process-learning", {
-        body: { content: text },
+        body: { content: text, profile },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
