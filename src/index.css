@@ -188,22 +188,35 @@
 @layer components {
   /* Cards */
   .abs-card {
-    @apply bg-card rounded-2xl border border-border/70;
+    @apply bg-card rounded-[14px] border border-border/70;
     box-shadow: var(--shadow-card);
   }
   .abs-card-elevated {
-    @apply bg-card rounded-2xl border border-border/40;
+    @apply bg-card rounded-[14px] border border-border/40;
     box-shadow: var(--shadow-pop);
   }
   .abs-surface {
     background: hsl(var(--surface-2));
-    @apply rounded-2xl border border-border/60;
+    @apply rounded-[14px] border border-border/60;
   }
 
-  /* Tap / hover behavior */
-  .abs-tap {
-    @apply transition-all duration-200 active:scale-[0.985];
+  /* Glass surface — translucent, blurred, mustard-tinted hairline */
+  .abs-glass {
+    background: hsl(var(--glass));
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--border-glow));
+    @apply rounded-[14px];
   }
+
+  /* Subtle mustard halo around active/important elements */
+  .abs-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  .abs-microglow {
+    box-shadow: 0 0 14px -2px hsl(var(--primary) / 0.45);
+  }
+
   .abs-hover-lift {
     @apply transition-all duration-200 md:hover:-translate-y-0.5 md:hover:shadow-[var(--shadow-pop)];
   }
