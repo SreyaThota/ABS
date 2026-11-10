@@ -5,6 +5,12 @@ Live demo: https://abs-zeta.vercel.app
 
 Upload lecture notes and the app generates a summary, key concepts, next steps, skill mapping, career-relevance insights, resume-ready bullet points and a career-readiness score, plus a quiz and a career chat.
 
+| | |
+|---|---|
+| **Type** | Hackathon · **Top 5** at GDG BTU "Build with AI" (team of 5) |
+| **My role** | CI/CD and deployment on Google Cloud |
+| **Stack** | React · TypeScript · Vite · Supabase edge functions · Gemini 2.5 Flash |
+
 ## My part
 CI/CD and deployment (build pipeline and deployment on Google Cloud). I did not write the application code. The front end was generated with Lovable and shaped by the team, which is why most commits are from `gpt-engineer-app[bot]`.
 
